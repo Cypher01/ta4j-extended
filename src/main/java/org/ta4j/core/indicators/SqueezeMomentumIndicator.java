@@ -23,7 +23,7 @@ import org.ta4j.core.num.Num;
  * <a href="https://www.tradingview.com/script/nqQ1DT5a-Squeeze-Momentum-Indicator-LazyBear/">TradingView</a>
  * The keltner channel indicators of ta4j-core are not used, because they use slightly different calculations (SMA vs. EMA).
  */
-public class SqueezeMomentumIndicator extends CachedIndicator<Num> {
+public class SqueezeMomentumIndicator extends AbstractIndicator<Num> {
 	private final BollingerBandsUpperIndicator upperBB;
 	private final BollingerBandsLowerIndicator lowerBB;
 	private final Indicator<Num> upperKC;
@@ -39,7 +39,7 @@ public class SqueezeMomentumIndicator extends CachedIndicator<Num> {
 	}
 
 	public SqueezeMomentumIndicator(ClosePriceIndicator indicator, int bbLength, double bbMultFactor, int kcLength, double kcMultFactor) {
-		super(indicator);
+		super(indicator.getBarSeries());
 		BarSeries series = indicator.getBarSeries();
 
 		BollingerBandsMiddleIndicator middleBB = new BollingerBandsMiddleIndicator(new SMAIndicator(indicator, bbLength));
@@ -67,7 +67,7 @@ public class SqueezeMomentumIndicator extends CachedIndicator<Num> {
 	}
 
 	@Override
-	protected Num calculate(int index) {
+	public Num getValue(int index) {
 		return squeezeMomentumIndicator.getValue(index);
 	}
 }

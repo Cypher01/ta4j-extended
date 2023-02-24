@@ -11,7 +11,7 @@ import org.ta4j.core.num.Num;
  * Kairi Relative Index (KRI).
  * <a href="https://www.tradingview.com/script/xzRPAboO-Indicator-Kairi-Relative-Index-KRI/">TradingView</a>
  */
-public class KRIIndicator extends CachedIndicator<Num> {
+public class KRIIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> kriIndicator;
 
 	public KRIIndicator(BarSeries series, int barCount) {
@@ -19,7 +19,7 @@ public class KRIIndicator extends CachedIndicator<Num> {
 	}
 
 	public KRIIndicator(Indicator<Num> indicator, int barCount) {
-		super(indicator);
+		super(indicator.getBarSeries());
 
 		Indicator<Num> smaIndicator = new SMAIndicator(indicator, barCount);
 		Indicator<Num> difference = CombineIndicator.minus(indicator, smaIndicator);
@@ -28,7 +28,7 @@ public class KRIIndicator extends CachedIndicator<Num> {
 	}
 
 	@Override
-	protected Num calculate(int index) {
+	public Num getValue(int index) {
 		return kriIndicator.getValue(index);
 	}
 }
