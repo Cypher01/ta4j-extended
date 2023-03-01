@@ -39,7 +39,7 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 		private final Num alpha;
 		private final Num gamma;
 
-		protected L0Indicator(Indicator<Num> indicator, double alpha) {
+		private L0Indicator(Indicator<Num> indicator, double alpha) {
 			super(indicator);
 
 			this.indicator = indicator;
@@ -62,7 +62,7 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 		private final Num gamma;
 		private final Num negGamma;
 
-		public L123Indicator(Indicator<Num> indicator, double alpha) {
+		private L123Indicator(Indicator<Num> indicator, double alpha) {
 			super(indicator);
 
 			this.indicator = indicator;
