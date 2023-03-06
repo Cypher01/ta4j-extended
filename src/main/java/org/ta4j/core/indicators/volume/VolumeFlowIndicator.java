@@ -7,10 +7,10 @@ import org.ta4j.core.indicators.CachedIndicator;
 import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.CombineIndicator;
-import org.ta4j.core.indicators.helpers.HLC3PriceIndicator;
 import org.ta4j.core.indicators.helpers.PreviousValueIndicator;
 import org.ta4j.core.indicators.helpers.SumValuesIndicator;
 import org.ta4j.core.indicators.helpers.TransformIndicator;
+import org.ta4j.core.indicators.helpers.TypicalPriceIndicator;
 import org.ta4j.core.indicators.helpers.VolumeIndicator;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
 import org.ta4j.core.num.Num;
@@ -24,7 +24,7 @@ public class VolumeFlowIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> volumeFlowIndicator;
 
 	public VolumeFlowIndicator(BarSeries series, int barCount, double coeff, double vcoeff) {
-		this(new HLC3PriceIndicator(series), barCount, coeff, vcoeff);
+		this(new TypicalPriceIndicator(series), barCount, coeff, vcoeff);
 	}
 
 	public VolumeFlowIndicator(Indicator<Num> indicator, int barCount, double coeff, double vcoeff) {

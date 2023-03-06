@@ -5,7 +5,7 @@ import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.ATRIndicatorPlus.Input;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.CombineIndicator;
-import org.ta4j.core.indicators.helpers.HL2PriceIndicator;
+import org.ta4j.core.indicators.helpers.MedianPriceIndicator;
 import org.ta4j.core.indicators.helpers.TransformIndicator;
 import org.ta4j.core.num.Num;
 
@@ -27,7 +27,7 @@ public class SupertrendIndicator extends CachedIndicator<Num> {
 	}
 
 	public SupertrendIndicator(BarSeries series, int barCount, double factor, Input atrInput) {
-		this(new HL2PriceIndicator(series), barCount, factor, atrInput);
+		this(new MedianPriceIndicator(series), barCount, factor, atrInput);
 	}
 
 	public SupertrendIndicator(Indicator<Num> indicator, int barCount, double factor, Input atrInput) {
