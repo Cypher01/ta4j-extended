@@ -18,13 +18,17 @@ public class HeikinAshiIndicator extends CachedIndicator<Bar> {
 	}
 
 	public BarSeries getHeikinAshiBarSeries() {
+		return getHeikinAshiBarSeries(getBarSeries().getName() + "_HeikinAshi");
+	}
+
+	public BarSeries getHeikinAshiBarSeries(String name) {
 		List<Bar> bars = new ArrayList<>();
 
 		for (int i = getBarSeries().getBeginIndex(); i <= getBarSeries().getEndIndex(); i++) {
 			bars.add(getValue(i));
 		}
 
-		return new BaseBarSeries("HeikinAshi", bars);
+		return new BaseBarSeries(name, bars);
 	}
 
 	@Override
