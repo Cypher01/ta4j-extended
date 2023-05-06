@@ -28,6 +28,8 @@ public class IsBarBearishRule extends AbstractRule {
 
 	@Override
 	public boolean isSatisfied(int index, TradingRecord tradingRecord) {
-		return indicator.getValue(index).isBearish();
+		boolean satisfied = indicator.getValue(index).isBearish();
+		traceIsSatisfied(index, satisfied);
+		return satisfied;
 	}
 }

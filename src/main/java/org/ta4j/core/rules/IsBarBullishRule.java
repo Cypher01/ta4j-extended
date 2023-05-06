@@ -28,6 +28,8 @@ public class IsBarBullishRule extends AbstractRule {
 
 	@Override
 	public boolean isSatisfied(int index, TradingRecord tradingRecord) {
-		return indicator.getValue(index).isBullish();
+		boolean satisfied = indicator.getValue(index).isBullish();
+		traceIsSatisfied(index, satisfied);
+		return satisfied;
 	}
 }
