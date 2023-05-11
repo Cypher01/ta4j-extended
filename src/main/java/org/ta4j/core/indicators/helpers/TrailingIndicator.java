@@ -33,11 +33,11 @@ public class TrailingIndicator extends CachedIndicator<Num> {
 	private final int startIndex;
 	private final Direction direction;
 
-	public static TrailingIndicator atr(BarSeries series, int barCount, int multiplier, int startIndex, Direction direction) {
+	public static TrailingIndicator atr(BarSeries series, int barCount, double multiplier, int startIndex, Direction direction) {
 		return atr(new ClosePriceIndicator(series), new ATRIndicatorPlus(series, barCount), multiplier, startIndex, direction);
 	}
 
-	public static TrailingIndicator atr(Indicator<Num> indicator, ATRIndicatorPlus atrIndicator, int multiplier, int startIndex, Direction direction) {
+	public static TrailingIndicator atr(Indicator<Num> indicator, ATRIndicatorPlus atrIndicator, double multiplier, int startIndex, Direction direction) {
 		switch (direction) {
 			case UP:
 				return trail(CombineIndicator.minus(indicator, TransformIndicator.multiply(atrIndicator, multiplier)), startIndex, direction);
