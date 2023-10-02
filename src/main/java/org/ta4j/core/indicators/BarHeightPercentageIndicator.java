@@ -18,8 +18,8 @@ public class BarHeightPercentageIndicator extends AbstractIndicator<Num> {
 		highLow
 	}
 
-	public final Indicator<Num> indicator;
-	public final BarHeightType type;
+	private final Indicator<Num> indicator;
+	private final BarHeightType type;
 
 	public BarHeightPercentageIndicator(BarSeries series, BarHeightType type) {
 		this(series, new ClosePriceIndicator(series), type);
