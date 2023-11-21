@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Heikin Ashi indicator.
  */
-public class HeikinAshiIndicator extends CachedIndicator<Bar> {
+public class HeikinAshiIndicator extends RecursiveCachedIndicator<Bar> {
 	public HeikinAshiIndicator(BarSeries series) {
 		super(series);
 	}
