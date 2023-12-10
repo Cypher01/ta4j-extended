@@ -3,6 +3,7 @@ package org.ta4j.core.indicators.helpers;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.ATRIndicatorPlus;
+import org.ta4j.core.indicators.CMAIndicator;
 import org.ta4j.core.indicators.CachedIndicator;
 import org.ta4j.core.indicators.DoubleEMAIndicator;
 import org.ta4j.core.indicators.EMAIndicator;
@@ -19,6 +20,7 @@ import org.ta4j.core.indicators.VIDYAIndicator;
 import org.ta4j.core.indicators.VWMAIndicator;
 import org.ta4j.core.indicators.WMAIndicator;
 import org.ta4j.core.indicators.ZLEMAIndicator;
+import org.ta4j.core.indicators.statistics.SimpleLinearRegressionIndicator;
 import org.ta4j.core.num.Num;
 
 import static org.ta4j.core.num.NaN.NaN;
@@ -48,6 +50,10 @@ public class TrailingIndicator extends CachedIndicator<Num> {
 		}
 	}
 
+	public static TrailingIndicator cma(BarSeries series, int barCount, int startIndex, Direction direction) {
+		return trail(new CMAIndicator(new ClosePriceIndicator(series), barCount), startIndex, direction);
+	}
+
 	public static TrailingIndicator doubleEma(BarSeries series, int barCount, int startIndex, Direction direction) {
 		return trail(new DoubleEMAIndicator(new ClosePriceIndicator(series), barCount), startIndex, direction);
 	}
@@ -58,6 +64,10 @@ public class TrailingIndicator extends CachedIndicator<Num> {
 
 	public static TrailingIndicator hma(BarSeries series, int barCount, int startIndex, Direction direction) {
 		return trail(new HMAIndicator(new ClosePriceIndicator(series), barCount), startIndex, direction);
+	}
+
+	public static TrailingIndicator lsma(BarSeries series, int barCount, int startIndex, Direction direction) {
+		return trail(new SimpleLinearRegressionIndicator(new ClosePriceIndicator(series), barCount), startIndex, direction);
 	}
 
 	public static TrailingIndicator lwma(BarSeries series, int barCount, int startIndex, Direction direction) {
