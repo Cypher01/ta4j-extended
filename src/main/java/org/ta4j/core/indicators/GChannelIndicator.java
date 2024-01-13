@@ -1,6 +1,8 @@
 package org.ta4j.core.indicators;
 
+import org.ta4j.core.BarSeries;
 import org.ta4j.core.Indicator;
+import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.num.Num;
 
 /**
@@ -11,6 +13,10 @@ public class GChannelIndicator extends AbstractIndicator<Num> {
 	private final GChannelUpperBandIndicator upperBandIndicator;
 	private final GChannelLowerBandIndicator lowerBandIndicator;
 	private final Num two;
+
+	protected GChannelIndicator(BarSeries series, int barCount) {
+		this(new ClosePriceIndicator(series), barCount);
+	}
 
 	public GChannelIndicator(Indicator<Num> indicator, int barCount) {
 		super(indicator.getBarSeries());
