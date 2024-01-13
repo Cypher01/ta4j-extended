@@ -14,7 +14,7 @@ public class GChannelIndicator extends AbstractIndicator<Num> {
 	private final GChannelLowerBandIndicator lowerBandIndicator;
 	private final Num two;
 
-	protected GChannelIndicator(BarSeries series, int barCount) {
+	public GChannelIndicator(BarSeries series, int barCount) {
 		this(new ClosePriceIndicator(series), barCount);
 	}
 
