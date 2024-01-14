@@ -1,21 +1,21 @@
 package org.ta4j.core.rules;
 
 import org.ta4j.core.TradingRecord;
-import org.ta4j.core.indicators.GChannelIndicator;
+import org.ta4j.core.indicators.gchannel.GChannelAverageIndicator;
 
 /**
- * Rule for GChannelIndicator bullish.
+ * Rule for GChannelAverageIndicator bullish.
  */
 public class GChannelBullishRule extends AbstractRule {
-	private final GChannelIndicator gChannelIndicator;
+	private final GChannelAverageIndicator gChannelAverageIndicator;
 
-	public GChannelBullishRule(GChannelIndicator gChannelIndicator) {
-		this.gChannelIndicator = gChannelIndicator;
+	public GChannelBullishRule(GChannelAverageIndicator gChannelAverageIndicator) {
+		this.gChannelAverageIndicator = gChannelAverageIndicator;
 	}
 
 	@Override
 	public boolean isSatisfied(int index, TradingRecord tradingRecord) {
-		boolean satisfied = gChannelIndicator.bullish(index);
+		boolean satisfied = gChannelAverageIndicator.bullish(index);
 		traceIsSatisfied(index, satisfied);
 		return satisfied;
 	}
