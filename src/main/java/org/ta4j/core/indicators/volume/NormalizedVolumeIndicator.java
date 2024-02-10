@@ -1,6 +1,8 @@
-package org.ta4j.core.indicators;
+package org.ta4j.core.indicators.volume;
 
 import org.ta4j.core.BarSeries;
+import org.ta4j.core.indicators.AbstractIndicator;
+import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.helpers.VolumeIndicator;
 import org.ta4j.core.num.Num;
 
