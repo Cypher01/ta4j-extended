@@ -5,7 +5,7 @@ import org.ta4j.core.num.Num;
 
 /**
  * Laguerre RSI indicator by everget.
- * <a href="https://de.tradingview.com/script/w0hoT58L-Laguerre-RSI/">TradingView</a>
+ * <a href="https://www.tradingview.com/script/w0hoT58L-Laguerre-RSI/">TradingView</a>
  */
 public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 	private final Indicator<Num> cuIndicator;

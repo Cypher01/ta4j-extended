@@ -6,7 +6,7 @@ import org.ta4j.core.num.Num;
 
 /**
  * Volume adjusted weighted moving average (VAWMA) indicator by Electrified.
- * <a href="https://de.tradingview.com/script/MDNfJENm-Moving-Average-Weighted-Volume-Adjusted/">TradingView</a>
+ * <a href="https://www.tradingview.com/script/MDNfJENm-Moving-Average-Weighted-Volume-Adjusted/">TradingView</a>
  */
 public class VAWMAIndicator extends CachedIndicator<Num> {
 	private final Indicator<Num> indicator;
