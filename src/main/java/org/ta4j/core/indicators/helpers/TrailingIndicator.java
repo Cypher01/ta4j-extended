@@ -36,7 +36,11 @@ public class TrailingIndicator extends CachedIndicator<Num> {
 	private final Direction direction;
 
 	public static TrailingIndicator atr(BarSeries series, int barCount, double multiplier, int startIndex, Direction direction) {
-		return atr(new ClosePriceIndicator(series), new ATRIndicatorPlus(series, barCount), multiplier, startIndex, direction);
+		return atr(new ClosePriceIndicator(series), barCount, multiplier, startIndex, direction);
+	}
+
+	public static TrailingIndicator atr(Indicator<Num> indicator, int barCount, double multiplier, int startIndex, Direction direction) {
+		return atr(indicator, new ATRIndicatorPlus(indicator.getBarSeries(), barCount), multiplier, startIndex, direction);
 	}
 
 	public static TrailingIndicator atr(Indicator<Num> indicator, ATRIndicatorPlus atrIndicator, double multiplier, int startIndex, Direction direction) {
@@ -128,6 +132,10 @@ public class TrailingIndicator extends CachedIndicator<Num> {
 		this.indicator = indicator;
 		this.startIndex = Math.max(startIndex, indicator.getBarSeries().getBeginIndex());
 		this.direction = direction;
+	}
+
+	public Direction getDirection() {
+		return direction;
 	}
 
 	@Override

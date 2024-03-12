@@ -13,7 +13,7 @@ import org.ta4j.core.num.Num;
  * <a href="https://www.tradingview.com/script/d9IjcYyS-Waddah-Attar-Explosion-V2-SHK/">TradingView</a>
  */
 public class WAELineIndicator extends AbstractIndicator<Num> {
-	private final CombineIndicator lineIndicator;
+	private final Indicator<Num> lineIndicator;
 
 	public WAELineIndicator(BarSeries series) {
 		this(series, 20, 2d);

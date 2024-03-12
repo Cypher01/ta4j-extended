@@ -7,6 +7,9 @@ import org.ta4j.core.num.Num;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Indicator to calculate the average of a list of other indicators.
+ */
 public class AverageIndicator extends CachedIndicator<Num> {
 	private final List<Indicator<Num>> indicators;
 

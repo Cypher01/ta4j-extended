@@ -4,6 +4,9 @@ import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.CachedIndicator;
 import org.ta4j.core.num.Num;
 
+/**
+ * Indicator to add up the last n values of another indicator.
+ */
 public class SumValuesIndicator extends CachedIndicator<Num> {
 	private final Indicator<Num> indicator;
 	private final int barCount;

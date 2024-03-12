@@ -1,6 +1,7 @@
 package org.ta4j.core.indicators.volume;
 
 import org.ta4j.core.BarSeries;
+import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.AbstractIndicator;
 import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.helpers.VolumeIndicator;
@@ -11,8 +12,8 @@ import org.ta4j.core.num.Num;
  * <a href="https://www.tradingview.com/script/pRBnipYB/">TradingView</a>
  */
 public class NormalizedVolumeIndicator extends AbstractIndicator<Num> {
-	private final VolumeIndicator volumeIndicator;
-	private final SMAIndicator smaIndicator;
+	private final Indicator<Num> volumeIndicator;
+	private final Indicator<Num> smaIndicator;
 
 	public NormalizedVolumeIndicator(BarSeries series, int barCount) {
 		this(new VolumeIndicator(series), barCount);
