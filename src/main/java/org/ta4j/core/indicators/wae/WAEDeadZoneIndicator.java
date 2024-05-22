@@ -13,6 +13,7 @@ import org.ta4j.core.num.Num;
  */
 public class WAEDeadZoneIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> deadZone;
+	private final int barCount;
 
 	public WAEDeadZoneIndicator(BarSeries series) {
 		this(series, 100, 3.7);
@@ -22,10 +23,16 @@ public class WAEDeadZoneIndicator extends AbstractIndicator<Num> {
 		super(series);
 
 		this.deadZone = TransformIndicator.multiply(new ATRIndicatorPlus(series, barCount), multiplier);
+		this.barCount = barCount;
 	}
 
 	@Override
 	public Num getValue(int index) {
 		return deadZone.getValue(index);
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
 	}
 }

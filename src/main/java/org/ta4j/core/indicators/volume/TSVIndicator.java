@@ -28,10 +28,10 @@ public class TSVIndicator extends CachedIndicator<Num> {
 	@Override
 	protected Num calculate(int index) {
 		if (index == 0) {
-			return numOf(0);
+			return zero();
 		}
 
-		Num value = numOf(0);
+		Num value = zero();
 		int loopLength = index - Math.min(index, barCount);
 
 		for (int i = index; i > loopLength; i--) {
@@ -42,5 +42,10 @@ public class TSVIndicator extends CachedIndicator<Num> {
 		}
 
 		return value;
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
 	}
 }

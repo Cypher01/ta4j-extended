@@ -21,12 +21,17 @@ public class AverageIndicator extends CachedIndicator<Num> {
 
 	@Override
 	protected Num calculate(int index) {
-		Num value = numOf(0);
+		Num value = zero();
 
 		for (Indicator<Num> indicator : indicators) {
 			value = value.plus(indicator.getValue(index));
 		}
 
 		return value.dividedBy(numOf(indicators.size()));
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return indicators.stream().mapToInt(Indicator::getUnstableBars).max().getAsInt();
 	}
 }

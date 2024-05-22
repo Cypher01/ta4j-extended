@@ -156,6 +156,11 @@ public class TrailingIndicator extends CachedIndicator<Num> {
 		}
 	}
 
+	@Override
+	public int getUnstableBars() {
+		return indicator.getUnstableBars();
+	}
+
 	public enum Direction {
 		UP,
 		DOWN

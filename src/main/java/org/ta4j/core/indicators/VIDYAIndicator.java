@@ -10,6 +10,7 @@ import org.ta4j.core.num.Num;
 public class VIDYAIndicator extends CachedIndicator<Num> {
 	private final Indicator<Num> indicator;
 	private final Indicator<Num> cmoIndicator;
+	private final int barCount;
 	private final Num alpha;
 
 	public VIDYAIndicator(Indicator<Num> indicator, int barCount) {
@@ -17,18 +18,24 @@ public class VIDYAIndicator extends CachedIndicator<Num> {
 
 		this.indicator = indicator;
 		this.cmoIndicator = new CMOIndicator(indicator, barCount);
+		this.barCount = barCount;
 		this.alpha = numOf(2d / (barCount + 1d));
 	}
 
 	@Override
 	protected Num calculate(int index) {
 		if (index == 0) {
-			return numOf(0);
+			return zero();
 		}
 
-		Num cmoAbsNormValue = cmoIndicator.getValue(index).abs().dividedBy(numOf(100));
+		Num cmoAbsNormValue = cmoIndicator.getValue(index).abs().dividedBy(hundred());
 		Num prevValue = getValue(index - 1);
 
-		return indicator.getValue(index).multipliedBy(alpha).multipliedBy(cmoAbsNormValue).plus(prevValue.multipliedBy(numOf(1).minus(alpha.multipliedBy(cmoAbsNormValue))));
+		return indicator.getValue(index).multipliedBy(alpha).multipliedBy(cmoAbsNormValue).plus(prevValue.multipliedBy(one().minus(alpha.multipliedBy(cmoAbsNormValue))));
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
 	}
 }

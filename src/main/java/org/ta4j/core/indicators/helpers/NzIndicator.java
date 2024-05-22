@@ -13,7 +13,7 @@ public class NzIndicator extends CachedIndicator<Num> {
 	private final Num replacement;
 
 	public NzIndicator(Indicator<Num> indicator) {
-		this(indicator, indicator.numOf(0));
+		this(indicator, indicator.zero());
 	}
 
 	public NzIndicator(Indicator<Num> indicator, Num replacement) {
@@ -27,5 +27,10 @@ public class NzIndicator extends CachedIndicator<Num> {
 	protected Num calculate(int index) {
 		Num value = indicator.getValue(index);
 		return value.isNaN() ? replacement : value;
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return indicator.getUnstableBars();
 	}
 }

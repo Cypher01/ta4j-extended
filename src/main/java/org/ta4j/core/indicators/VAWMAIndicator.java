@@ -27,8 +27,8 @@ public class VAWMAIndicator extends CachedIndicator<Num> {
 			return indicator.getValue(0);
 		}
 
-		Num sum = numOf(0);
-		Num vol = numOf(0);
+		Num sum = zero();
+		Num vol = zero();
 		int weight = 1;
 
 		for (int i = Math.max(1, index - barCount + 1); i <= index; i++) {
@@ -39,5 +39,10 @@ public class VAWMAIndicator extends CachedIndicator<Num> {
 		}
 
 		return sum.dividedBy(vol);
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
 	}
 }

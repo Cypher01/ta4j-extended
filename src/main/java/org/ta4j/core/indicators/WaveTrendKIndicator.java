@@ -14,6 +14,7 @@ import org.ta4j.core.num.Num;
  */
 public class WaveTrendKIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> indicator;
+	private final int unstableBars;
 
 	public WaveTrendKIndicator(BarSeries series) {
 		this(series, 10, 21);
@@ -29,10 +30,16 @@ public class WaveTrendKIndicator extends AbstractIndicator<Num> {
 		TransformIndicator divisor = TransformIndicator.multiply(d, 0.015);
 		NzIndicator ci = new NzIndicator(CombineIndicator.divide(apMinusEsa, divisor));
 		this.indicator = new EMAIndicator(ci, barCountAverage);
+		this.unstableBars = Math.max(barCountChannel, barCountAverage);
 	}
 
 	@Override
 	public Num getValue(int index) {
 		return indicator.getValue(index);
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return unstableBars;
 	}
 }

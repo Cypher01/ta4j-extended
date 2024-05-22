@@ -33,4 +33,9 @@ public class SubstituteIndicator extends CachedIndicator<Num> {
 			return value;
 		}
 	}
+
+	@Override
+	public int getUnstableBars() {
+		return indicator.getUnstableBars();
+	}
 }

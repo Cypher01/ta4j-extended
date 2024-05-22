@@ -10,27 +10,28 @@ import org.ta4j.core.indicators.helpers.TransformIndicator;
 import org.ta4j.core.num.Num;
 
 /**
- * Supertrend indicator, based on PineScript v5 Reference Manual.
+ * Supertrend indicator with more flexible configuration, based on PineScript v5 Reference Manual.
  * <a href="https://www.tradingview.com/pine-script-reference/v5/#fun_ta{dot}supertrend">TradingView</a>
  */
-public class SupertrendIndicator extends CachedIndicator<Num> {
+public class SupertrendIndicatorPlus extends CachedIndicator<Num> {
 	private final Indicator<Num> closePriceIndicator;
 	private final Indicator<Num> upperAtrBandIndicator;
 	private final Indicator<Num> lowerAtrBandIndicator;
+	private final int barCount;
 
-	public SupertrendIndicator(BarSeries series, int barCount, double factor) {
+	public SupertrendIndicatorPlus(BarSeries series, int barCount, double factor) {
 		this(series, barCount, factor, Input.MMA);
 	}
 
-	public SupertrendIndicator(Indicator<Num> indicator, int barCount, double factor) {
+	public SupertrendIndicatorPlus(Indicator<Num> indicator, int barCount, double factor) {
 		this(indicator, barCount, factor, Input.MMA);
 	}
 
-	public SupertrendIndicator(BarSeries series, int barCount, double factor, Input atrInput) {
+	public SupertrendIndicatorPlus(BarSeries series, int barCount, double factor, Input atrInput) {
 		this(new MedianPriceIndicator(series), barCount, factor, atrInput);
 	}
 
-	public SupertrendIndicator(Indicator<Num> indicator, int barCount, double factor, Input atrInput) {
+	public SupertrendIndicatorPlus(Indicator<Num> indicator, int barCount, double factor, Input atrInput) {
 		super(indicator);
 
 		if (indicator instanceof ClosePriceIndicator) {
@@ -42,6 +43,7 @@ public class SupertrendIndicator extends CachedIndicator<Num> {
 		TransformIndicator atrIndicatorMultiplied = TransformIndicator.multiply(new ATRIndicatorPlus(indicator.getBarSeries(), barCount, atrInput), factor);
 		this.upperAtrBandIndicator = CombineIndicator.plus(indicator, atrIndicatorMultiplied);
 		this.lowerAtrBandIndicator = CombineIndicator.minus(indicator, atrIndicatorMultiplied);
+		this.barCount = barCount;
 	}
 
 	@Override
@@ -67,5 +69,10 @@ public class SupertrendIndicator extends CachedIndicator<Num> {
 		} else {
 			throw new IllegalArgumentException("Previous value equals previous close price, this shouldn't happen");
 		}
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
 	}
 }

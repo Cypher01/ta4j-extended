@@ -10,8 +10,6 @@ public class McGinleyDynamicIndicator extends CachedIndicator<Num> {
 	private final Indicator<Num> indicator;
 	private final Indicator<Num> emaIndicator;
 	private final int barCount;
-	private final Num barCountNum;
-	private final Num four;
 
 	public McGinleyDynamicIndicator(Indicator<Num> indicator, int barCount) {
 		super(indicator);
@@ -19,8 +17,6 @@ public class McGinleyDynamicIndicator extends CachedIndicator<Num> {
 		this.indicator = indicator;
 		this.emaIndicator = new EMAIndicator(indicator, barCount);
 		this.barCount = barCount;
-		this.barCountNum = numOf(barCount);
-		this.four = numOf(4);
 	}
 
 	@Override
@@ -32,6 +28,11 @@ public class McGinleyDynamicIndicator extends CachedIndicator<Num> {
 		Num source = indicator.getValue(index);
 		Num prevValue = getValue(index - 1);
 
-		return prevValue.plus(source.minus(prevValue).dividedBy(barCountNum.multipliedBy(source.dividedBy(prevValue).pow(four))));
+		return prevValue.plus(source.minus(prevValue).dividedBy(numOf(barCount).multipliedBy(source.dividedBy(prevValue).pow(numOf(4)))));
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
 	}
 }

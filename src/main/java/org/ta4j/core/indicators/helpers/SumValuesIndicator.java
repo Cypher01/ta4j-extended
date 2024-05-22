@@ -20,12 +20,17 @@ public class SumValuesIndicator extends CachedIndicator<Num> {
 
 	@Override
 	protected Num calculate(int index) {
-		Num sum = numOf(0);
+		Num sum = zero();
 
 		for (int i = index; i > index - barCount; i--) {
 			sum = sum.plus(indicator.getValue(i));
 		}
 
 		return sum;
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return indicator.getUnstableBars();
 	}
 }

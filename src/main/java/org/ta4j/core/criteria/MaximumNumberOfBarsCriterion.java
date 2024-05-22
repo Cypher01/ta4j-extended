@@ -23,7 +23,7 @@ public class MaximumNumberOfBarsCriterion extends AbstractAnalysisCriterion {
 				.filter(Position::isClosed)
 				.map(t -> calculate(series, t))
 				.max(Num::compareTo)
-				.orElse(series.numOf(0));
+				.orElse(series.zero());
 	}
 
 	@Override

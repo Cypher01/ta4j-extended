@@ -13,6 +13,7 @@ import org.ta4j.core.num.Num;
  */
 public class T3MAIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> t3maIndicator;
+	private final int barCount;
 
 	public T3MAIndicator(BarSeries series, int barCount) {
 		this(new ClosePriceIndicator(series), barCount);
@@ -40,10 +41,16 @@ public class T3MAIndicator extends AbstractIndicator<Num> {
 		TransformIndicator addend4 = TransformIndicator.multiply(xe3, c4.doubleValue());
 
 		this.t3maIndicator = CombineIndicator.plus(CombineIndicator.plus(CombineIndicator.plus(addend1, addend2), addend3), addend4);
+		this.barCount = barCount;
 	}
 
 	@Override
 	public Num getValue(int index) {
 		return t3maIndicator.getValue(index);
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
 	}
 }

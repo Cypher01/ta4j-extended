@@ -44,11 +44,11 @@ public class CMAIndicator extends CachedIndicator<Num> {
 
 		Num v1 = varianceIndicator.getValue(index);
 		Num v2 = prevValueOrSma.minus(sma.getValue(index)).pow(2);
-		Num v3 = v1.isEqual(numOf(0)) || v2.isEqual(numOf(0)) ? numOf(1) : v2.dividedBy(v1.plus(v2));
+		Num v3 = v1.isZero() || v2.isZero() ? one() : v2.dividedBy(v1.plus(v2));
 
-		Num err = numOf(1);
-		Num kPrev = numOf(1);
-		Num k = numOf(1);
+		Num err = one();
+		Num kPrev = one();
+		Num k = one();
 
 		for (int i = 0; i < 5000; i++) {
 			if (err.isGreaterThan(tolerance)) {
@@ -59,5 +59,10 @@ public class CMAIndicator extends CachedIndicator<Num> {
 		}
 
 		return prevValueOrSrc.plus(k.multipliedBy(sma.getValue(index).minus(prevValueOrSrc)));
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return sma.getUnstableBars();
 	}
 }

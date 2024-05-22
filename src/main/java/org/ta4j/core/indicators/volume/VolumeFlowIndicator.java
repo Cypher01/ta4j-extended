@@ -22,6 +22,7 @@ import org.ta4j.core.num.Num;
  */
 public class VolumeFlowIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> volumeFlowIndicator;
+	private final int barCount;
 
 	public VolumeFlowIndicator(BarSeries series, int barCount, double coeff, double vcoeff) {
 		this(new TypicalPriceIndicator(series), barCount, coeff, vcoeff);
@@ -44,11 +45,17 @@ public class VolumeFlowIndicator extends AbstractIndicator<Num> {
 		VPCIndicator vcp = new VPCIndicator(mf, cutoff, vc);
 		SumValuesIndicator sum = new SumValuesIndicator(vcp, barCount);
 		this.volumeFlowIndicator = CombineIndicator.divide(sum, vave);
+		this.barCount = barCount;
 	}
 
 	@Override
 	public Num getValue(int index) {
 		return volumeFlowIndicator.getValue(index);
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
 	}
 
 	private static class VPCIndicator extends CachedIndicator<Num> {
@@ -75,8 +82,13 @@ public class VolumeFlowIndicator extends AbstractIndicator<Num> {
 			} else if (mf.getValue(index).isLessThan(cutoffNeg.getValue(index))) {
 				return vcNeg.getValue(index);
 			} else {
-				return numOf(0);
+				return zero();
 			}
+		}
+
+		@Override
+		public int getUnstableBars() {
+			return 0;
 		}
 	}
 }

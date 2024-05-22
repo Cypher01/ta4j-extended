@@ -16,6 +16,7 @@ import org.ta4j.core.num.Num;
  */
 public class WAETrendIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> trendIndicator;
+	private final int unstableBars;
 
 	public WAETrendIndicator(BarSeries series) {
 		this(series, 150, 20, 40);
@@ -37,10 +38,16 @@ public class WAETrendIndicator extends AbstractIndicator<Num> {
 		CombineIndicator macd = CombineIndicator.minus(fastMA, slowMA);
 		PreviousValueIndicator macdPrev = new PreviousValueIndicator(macd);
 		this.trendIndicator = TransformIndicator.multiply(CombineIndicator.minus(macd, macdPrev), sensitivity);
+		this.unstableBars = Math.max(fastLength, slowLength);
 	}
 
 	@Override
 	public Num getValue(int index) {
 		return trendIndicator.getValue(index);
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return unstableBars;
 	}
 }

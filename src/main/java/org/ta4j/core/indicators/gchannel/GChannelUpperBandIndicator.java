@@ -10,41 +10,33 @@ import org.ta4j.core.num.Num;
  */
 public class GChannelUpperBandIndicator extends CachedIndicator<Num> {
 	private final Indicator<Num> indicator;
-	private final Num barCount;
+	private final int barCount;
 	private GChannelLowerBandIndicator lowerBandIndicator;
 
 	GChannelUpperBandIndicator(Indicator<Num> indicator, int barCount) {
 		super(indicator);
 		this.indicator = indicator;
-		this.barCount = numOf(barCount);
+		this.barCount = barCount;
 	}
 
 	void setLowerBandIndicator(final GChannelLowerBandIndicator lowerBandIndicator) {
 		this.lowerBandIndicator = lowerBandIndicator;
 	}
 
-	boolean breakout(int index) {
-		if (index == 0) {
-			return false;
-		}
-
-		Num prevClosePrice = getBarSeries().getBar(index - 1).getClosePrice();
-		Num closePrice = getBarSeries().getBar(index).getClosePrice();
-		Num prevValue = getValue(index - 1);
-		Num value = getValue(index);
-
-		return prevValue.isLessThan(prevClosePrice) && value.isGreaterThan(closePrice);
-	}
-
 	@Override
 	protected Num calculate(int index) {
 		if (index == 0) {
-			return numOf(0);
+			return zero();
 		}
 
 		Num prevValueUpper = getValue(index - 1);
 		Num prevValueLower = lowerBandIndicator.getValue(index - 1);
 
-		return indicator.getValue(index).max(prevValueUpper).minus(prevValueUpper.minus(prevValueLower).dividedBy(barCount));
+		return indicator.getValue(index).max(prevValueUpper).minus(prevValueUpper.minus(prevValueLower).dividedBy(numOf(barCount)));
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
 	}
 }

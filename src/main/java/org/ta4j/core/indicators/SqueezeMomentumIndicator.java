@@ -29,6 +29,7 @@ public class SqueezeMomentumIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> upperKC;
 	private final Indicator<Num> lowerKC;
 	private final Indicator<Num> squeezeMomentumIndicator;
+	private final int unstableBars;
 
 	public SqueezeMomentumIndicator(BarSeries series) {
 		this(series, 20, 2d, 20, 1.5);
@@ -56,6 +57,7 @@ public class SqueezeMomentumIndicator extends AbstractIndicator<Num> {
 		LowestValueIndicator lowestLow = new LowestValueIndicator(new LowPriceIndicator(series), kcLength);
 		Indicator<Num> averageIndicator = new AverageIndicator(highestHigh, lowestLow, ma);
 		this.squeezeMomentumIndicator = new SimpleLinearRegressionIndicator(CombineIndicator.minus(indicator, averageIndicator), kcLength);
+		this.unstableBars = Math.max(bbLength, kcLength);
 	}
 
 	public boolean squeezeOn(int index) {
@@ -69,5 +71,10 @@ public class SqueezeMomentumIndicator extends AbstractIndicator<Num> {
 	@Override
 	public Num getValue(int index) {
 		return squeezeMomentumIndicator.getValue(index);
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return unstableBars;
 	}
 }

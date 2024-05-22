@@ -49,9 +49,14 @@ public class BarHeightPercentageIndicator extends AbstractIndicator<Num> {
 		}
 
 		if (range.isZero()) {
-			return numOf(0);
+			return zero();
 		} else {
-			return range.dividedBy(indicator.getValue(index)).multipliedBy(numOf(100));
+			return range.dividedBy(indicator.getValue(index)).multipliedBy(hundred());
 		}
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return indicator.getUnstableBars();
 	}
 }

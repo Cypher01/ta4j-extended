@@ -16,6 +16,7 @@ import org.ta4j.core.num.Num;
  */
 public class SmoothRangeIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> smoothRange;
+	private final int unstableBars;
 
 	public SmoothRangeIndicator(BarSeries series, int barCount, double multiplier) {
 		this(new ClosePriceIndicator(series), barCount, multiplier);
@@ -30,10 +31,16 @@ public class SmoothRangeIndicator extends AbstractIndicator<Num> {
 		EMAIndicator avrng = new EMAIndicator(abs, barCount);
 		EMAIndicator smoothrng = new EMAIndicator(avrng, barCount * 2 - 1);
 		this.smoothRange = TransformIndicator.multiply(smoothrng, multiplier);
+		this.unstableBars = barCount * 2 - 1;
 	}
 
 	@Override
 	public Num getValue(int index) {
 		return smoothRange.getValue(index);
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return unstableBars;
 	}
 }

@@ -11,18 +11,23 @@ import org.ta4j.core.num.Num;
  */
 public class VWMAIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> vwmaIndicator;
+	private final int barCount;
 
 	public VWMAIndicator(Indicator<Num> indicator, int barCount) {
 		super(indicator.getBarSeries());
 		VolumeIndicator volumeIndicator = new VolumeIndicator(indicator.getBarSeries());
 		CombineIndicator inputTimesVolume = CombineIndicator.multiply(indicator, volumeIndicator);
-		SMAIndicator smaIndicator1 = new SMAIndicator(inputTimesVolume, barCount);
-		SMAIndicator smaIndicator2 = new SMAIndicator(volumeIndicator, barCount);
-		this.vwmaIndicator = CombineIndicator.divide(smaIndicator1, smaIndicator2);
+		this.vwmaIndicator = CombineIndicator.divide(new SMAIndicator(inputTimesVolume, barCount), new SMAIndicator(volumeIndicator, barCount));
+		this.barCount = barCount;
 	}
 
 	@Override
 	public Num getValue(int index) {
 		return vwmaIndicator.getValue(index);
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
 	}
 }

@@ -37,6 +37,11 @@ public class VolumeOscillatorIndicator extends CachedIndicator<Num> {
 	protected Num calculate(int index) {
 		Num fast = fastMaIndicator.getValue(index);
 		Num slow = slowMaIndicator.getValue(index);
-		return numOf(100).multipliedBy(fast.minus(slow)).dividedBy(slow);
+		return hundred().multipliedBy(fast.minus(slow)).dividedBy(slow);
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return Math.max(fastMaIndicator.getUnstableBars(), slowMaIndicator.getUnstableBars());
 	}
 }

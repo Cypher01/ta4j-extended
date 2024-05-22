@@ -24,6 +24,16 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
 		fantailVMAIndicator = new SMAIndicator(new VarMAIndicator(series, adxLength, weighting), barCount);
 	}
 
+	@Override
+	public Num getValue(int index) {
+		return fantailVMAIndicator.getValue(index);
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return fantailVMAIndicator.getUnstableBars();
+	}
+
 	private static class VarMAIndicator extends CachedIndicator<Num> {
 		private final Indicator<Num> adx;
 		private final Indicator<Num> adxLow;
@@ -60,14 +70,14 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
 				return closePrice;
 			}
 
-			Num constVal = diff.getValue(index).isPositive() ? adx.getValue(index).minus(adxLow.getValue(index)).dividedBy(diff.getValue(index)) : numOf(0);
+			Num constVal = diff.getValue(index).isPositive() ? adx.getValue(index).minus(adxLow.getValue(index)).dividedBy(diff.getValue(index)) : zero();
 			return getValue(index - 1).multipliedBy(numOf(2).minus(constVal)).plus(constVal.multipliedBy(closePrice)).dividedBy(numOf(2));
 		}
-	}
 
-	@Override
-	public Num getValue(int index) {
-		return fantailVMAIndicator.getValue(index);
+		@Override
+		public int getUnstableBars() {
+			return 0;
+		}
 	}
 
 	private static class SPDIIndicator extends CachedIndicator<Num> {
@@ -85,11 +95,16 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
 		@Override
 		protected Num calculate(int index) {
 			if (index == 0) {
-				return numOf(0);
+				return zero();
 			}
 
-			Num bullsValue = bulls1.getValue(index).isLessThanOrEqual(bears1.getValue(index)) ? numOf(0) : bulls1.getValue(index);
-			return getValue(index - 1).multipliedBy(weighting).plus(bullsValue).dividedBy(weighting.plus(numOf(1)));
+			Num bullsValue = bulls1.getValue(index).isLessThanOrEqual(bears1.getValue(index)) ? zero() : bulls1.getValue(index);
+			return getValue(index - 1).multipliedBy(weighting).plus(bullsValue).dividedBy(weighting.plus(one()));
+		}
+
+		@Override
+		public int getUnstableBars() {
+			return 0;
 		}
 	}
 
@@ -108,11 +123,16 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
 		@Override
 		protected Num calculate(int index) {
 			if (index == 0) {
-				return numOf(0);
+				return zero();
 			}
 
-			Num bearsValue = bulls1.getValue(index).isGreaterThanOrEqual(bears1.getValue(index)) ? numOf(0) : bears1.getValue(index);
-			return getValue(index - 1).multipliedBy(weighting).plus(bearsValue).dividedBy(weighting.plus(numOf(1)));
+			Num bearsValue = bulls1.getValue(index).isGreaterThanOrEqual(bears1.getValue(index)) ? zero() : bears1.getValue(index);
+			return getValue(index - 1).multipliedBy(weighting).plus(bearsValue).dividedBy(weighting.plus(one()));
+		}
+
+		@Override
+		public int getUnstableBars() {
+			return 0;
 		}
 	}
 
@@ -136,7 +156,12 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
 
 			Num prevClosePrice = getBarSeries().getBar(index - 1).getClosePrice();
 			Num tr = highPrice.minus(lowPrice).max(highPrice.minus(prevClosePrice));
-			return getValue(index - 1).multipliedBy(weighting).plus(tr).dividedBy(weighting.plus(numOf(1)));
+			return getValue(index - 1).multipliedBy(weighting).plus(tr).dividedBy(weighting.plus(one()));
+		}
+
+		@Override
+		public int getUnstableBars() {
+			return 0;
 		}
 	}
 
@@ -157,14 +182,19 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
 		@Override
 		protected Num calculate(int index) {
 			if (index == 0) {
-				return numOf(0);
+				return zero();
 			}
 
 			Num sTRValue = sTR.getValue(index);
-			Num pdi = sTRValue.isPositive() ? sPDI.getValue(index).dividedBy(sTRValue) : numOf(0);
-			Num mdi = sTRValue.isPositive() ? sMDI.getValue(index).dividedBy(sTRValue) : numOf(0);
-			Num dx = pdi.plus(mdi).isPositive() ? pdi.minus(mdi).abs().dividedBy(pdi.plus(mdi)) : numOf(0);
-			return getValue(index - 1).multipliedBy(weighting).plus(dx).dividedBy(weighting.plus(numOf(1)));
+			Num pdi = sTRValue.isPositive() ? sPDI.getValue(index).dividedBy(sTRValue) : zero();
+			Num mdi = sTRValue.isPositive() ? sMDI.getValue(index).dividedBy(sTRValue) : zero();
+			Num dx = pdi.plus(mdi).isPositive() ? pdi.minus(mdi).abs().dividedBy(pdi.plus(mdi)) : zero();
+			return getValue(index - 1).multipliedBy(weighting).plus(dx).dividedBy(weighting.plus(one()));
+		}
+
+		@Override
+		public int getUnstableBars() {
+			return 0;
 		}
 	}
 }

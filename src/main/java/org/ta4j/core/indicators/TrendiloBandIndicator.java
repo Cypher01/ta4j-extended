@@ -10,17 +10,24 @@ import org.ta4j.core.num.Num;
  */
 public class TrendiloBandIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> rms;
+	private final int barCount;
 
-	public TrendiloBandIndicator(TrendiloIndicator trendiloIndicator, double multiplier, int length) {
+	public TrendiloBandIndicator(TrendiloIndicator trendiloIndicator, double multiplier, int barCount) {
 		super(trendiloIndicator.getBarSeries());
 
-		TransformIndicator avpchPow = new TransformIndicator(trendiloIndicator, val -> val.pow(2));
-		SMAIndicator avpchPowSma = new SMAIndicator(avpchPow, length);
+		TransformIndicator avpchPow = TransformIndicator.pow(trendiloIndicator, 2);
+		SMAIndicator avpchPowSma = new SMAIndicator(avpchPow, barCount);
 		this.rms = TransformIndicator.multiply(TransformIndicator.sqrt(avpchPowSma), multiplier);
+		this.barCount = barCount;
 	}
 
 	@Override
 	public Num getValue(int index) {
 		return rms.getValue(index);
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
 	}
 }

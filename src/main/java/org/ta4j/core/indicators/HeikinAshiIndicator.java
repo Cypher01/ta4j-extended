@@ -54,4 +54,9 @@ public class HeikinAshiIndicator extends RecursiveCachedIndicator<Bar> {
 				haOpenPrice, haHighPrice, haLowPrice, haClosePrice,
 				bar.getVolume(), bar.getAmount(), bar.getTrades());
 	}
+
+	@Override
+	public int getUnstableBars() {
+		return 0;
+	}
 }

@@ -24,4 +24,9 @@ public class OHLC4PriceIndicator extends CachedIndicator<Num> {
 
 		return openPrice.plus(highPrice).plus(lowPrice).plus(closePrice).dividedBy(numOf(4));
 	}
+
+	@Override
+	public int getUnstableBars() {
+		return 0;
+	}
 }

@@ -23,4 +23,9 @@ public class HLCC4PriceIndicator extends CachedIndicator<Num> {
 
 		return highPrice.plus(lowPrice).plus(closePrice).plus(closePrice).dividedBy(numOf(4));
 	}
+
+	@Override
+	public int getUnstableBars() {
+		return 0;
+	}
 }

@@ -28,6 +28,11 @@ public class NormalizedVolumeIndicator extends AbstractIndicator<Num> {
 
 	@Override
 	public Num getValue(int index) {
-		return volumeIndicator.getValue(index).dividedBy(smaIndicator.getValue(index)).multipliedBy(numOf(100));
+		return volumeIndicator.getValue(index).dividedBy(smaIndicator.getValue(index)).multipliedBy(hundred());
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return smaIndicator.getUnstableBars();
 	}
 }

@@ -13,6 +13,7 @@ import org.ta4j.core.num.Num;
  */
 public class KRIIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> kriIndicator;
+	private final int barCount;
 
 	public KRIIndicator(BarSeries series, int barCount) {
 		this(new ClosePriceIndicator(series), barCount);
@@ -25,10 +26,16 @@ public class KRIIndicator extends AbstractIndicator<Num> {
 		Indicator<Num> difference = CombineIndicator.minus(indicator, smaIndicator);
 		Indicator<Num> quotient = CombineIndicator.divide(difference, smaIndicator);
 		this.kriIndicator = TransformIndicator.multiply(quotient, 100);
+		this.barCount = barCount;
 	}
 
 	@Override
 	public Num getValue(int index) {
 		return kriIndicator.getValue(index);
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
 	}
 }

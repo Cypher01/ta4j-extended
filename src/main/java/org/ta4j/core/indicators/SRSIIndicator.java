@@ -12,6 +12,7 @@ import org.ta4j.core.num.Num;
 public class SRSIIndicator extends CachedIndicator<Num> {
 	private final Indicator<Num> r4;
 	private final Indicator<Num> r5;
+	private final int unstableBars;
 
 	public SRSIIndicator(Indicator<Num> indicator, int barCount, int smoothing) {
 		super(indicator);
@@ -19,18 +20,22 @@ public class SRSIIndicator extends CachedIndicator<Num> {
 		Indicator<Num> r1 = new EMAIndicator(indicator, barCount);
 		Indicator<Num> r2 = TransformIndicator.max(CombineIndicator.minus(indicator, r1), 0);
 		Indicator<Num> r3 = TransformIndicator.max(CombineIndicator.minus(r1, indicator), 0);
-		r4 = new SMMAIndicator(r2, smoothing);
-		r5 = new SMMAIndicator(r3, smoothing);
+		this.r4 = new SMMAIndicator(r2, smoothing);
+		this.r5 = new SMMAIndicator(r3, smoothing);
+		this.unstableBars = Math.max(barCount, smoothing);
 	}
 
 	@Override
 	protected Num calculate(int index) {
-		Num hundred = numOf(100);
-
-		if (r5.getValue(index).isEqual(numOf(0))) {
-			return hundred;
+		if (r5.getValue(index).isZero()) {
+			return hundred();
 		}
 
-		return hundred.minus(hundred.dividedBy(numOf(1).plus(r4.getValue(index).dividedBy(r5.getValue(index)))));
+		return hundred().minus(hundred().dividedBy(one().plus(r4.getValue(index).dividedBy(r5.getValue(index)))));
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return unstableBars;
 	}
 }

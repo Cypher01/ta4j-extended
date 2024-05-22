@@ -31,4 +31,9 @@ public class TrendiloIndicator extends AbstractIndicator<Num> {
 	public Num getValue(int index) {
 		return avpch.getValue(index);
 	}
+
+	@Override
+	public int getUnstableBars() {
+		return avpch.getUnstableBars();
+	}
 }

@@ -24,4 +24,9 @@ public class SMMAIndicator extends CachedIndicator<Num> {
 
 		return getValue(index - 1).multipliedBy(numOf(barCount - 1)).plus(indicator.getValue(index)).dividedBy(numOf(barCount));
 	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
+	}
 }

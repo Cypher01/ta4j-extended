@@ -26,12 +26,13 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 	protected Num calculate(int index) {
 		Num cu = cuIndicator.getValue(index);
 		Num cd = cdIndicator.getValue(index);
-
-		return nz(cu.dividedBy(cu.plus(cd))); // division by zero returns NaN, which is resolved to zero by nz method
+		Num value = cu.dividedBy(cu.plus(cd));
+		return value.isNaN() ? zero() : value; // division by zero returns NaN, which is resolved to zero
 	}
 
-	private Num nz(Num num) {
-		return num.isNaN() ? numOf(0) : num;
+	@Override
+	public int getUnstableBars() {
+		return 0;
 	}
 
 	private static class L0Indicator extends CachedIndicator<Num> {
@@ -50,10 +51,15 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 		@Override
 		protected Num calculate(int index) {
 			if (index == 0) {
-				return numOf(0);
+				return zero();
 			}
 
 			return alpha.multipliedBy(indicator.getValue(index)).plus(gamma.multipliedBy(getValue(index - 1)));
+		}
+
+		@Override
+		public int getUnstableBars() {
+			return 0;
 		}
 	}
 
@@ -73,10 +79,15 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 		@Override
 		protected Num calculate(int index) {
 			if (index == 0) {
-				return numOf(0);
+				return zero();
 			}
 
 			return negGamma.multipliedBy(indicator.getValue(index)).plus(indicator.getValue(index - 1)).plus(gamma.multipliedBy(getValue(index - 1)));
+		}
+
+		@Override
+		public int getUnstableBars() {
+			return 0;
 		}
 	}
 
@@ -97,11 +108,16 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 
 		@Override
 		protected Num calculate(int index) {
-			Num addend1 = l0Indicator.getValue(index).minus(l1Indicator.getValue(index)).max(numOf(0));
-			Num addend2 = l1Indicator.getValue(index).minus(l2Indicator.getValue(index)).max(numOf(0));
-			Num addend3 = l2Indicator.getValue(index).minus(l3Indicator.getValue(index)).max(numOf(0));
+			Num addend1 = l0Indicator.getValue(index).minus(l1Indicator.getValue(index)).max(zero());
+			Num addend2 = l1Indicator.getValue(index).minus(l2Indicator.getValue(index)).max(zero());
+			Num addend3 = l2Indicator.getValue(index).minus(l3Indicator.getValue(index)).max(zero());
 
 			return addend1.plus(addend2).plus(addend3);
+		}
+
+		@Override
+		public int getUnstableBars() {
+			return 0;
 		}
 	}
 
@@ -122,11 +138,16 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 
 		@Override
 		protected Num calculate(int index) {
-			Num addend1 = l1Indicator.getValue(index).minus(l0Indicator.getValue(index)).max(numOf(0));
-			Num addend2 = l2Indicator.getValue(index).minus(l1Indicator.getValue(index)).max(numOf(0));
-			Num addend3 = l3Indicator.getValue(index).minus(l2Indicator.getValue(index)).max(numOf(0));
+			Num addend1 = l1Indicator.getValue(index).minus(l0Indicator.getValue(index)).max(zero());
+			Num addend2 = l2Indicator.getValue(index).minus(l1Indicator.getValue(index)).max(zero());
+			Num addend3 = l3Indicator.getValue(index).minus(l2Indicator.getValue(index)).max(zero());
 
 			return addend1.plus(addend2).plus(addend3);
+		}
+
+		@Override
+		public int getUnstableBars() {
+			return 0;
 		}
 	}
 }

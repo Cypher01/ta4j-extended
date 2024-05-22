@@ -53,4 +53,9 @@ public class ASOIndicator extends AbstractIndicator<Num> {
 	public Num getValue(int index) {
 		return asoIndicator.getValue(index);
 	}
+
+	@Override
+	public int getUnstableBars() {
+		return asoIndicator.getUnstableBars();
+	}
 }

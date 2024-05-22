@@ -31,7 +31,7 @@ public class RangeFilterIndicator extends CachedIndicator<Num> {
 
 	@Override
 	protected Num calculate(int index) {
-		Num prevValue = numOf(0);
+		Num prevValue = zero();
 
 		if (index > 0) {
 			prevValue = getValue(index - 1);
@@ -56,5 +56,10 @@ public class RangeFilterIndicator extends CachedIndicator<Num> {
 		}
 
 		return rngfilt;
+	}
+
+	@Override
+	public int getUnstableBars() {
+		return smoothRangeIndicator.getUnstableBars();
 	}
 }

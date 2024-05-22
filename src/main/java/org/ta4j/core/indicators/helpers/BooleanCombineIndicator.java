@@ -45,6 +45,11 @@ public class BooleanCombineIndicator extends CachedIndicator<Boolean> {
 		}
 	}
 
+	@Override
+	public int getUnstableBars() {
+		return Math.max(indicator1.getUnstableBars(), indicator2.getUnstableBars());
+	}
+
 	public BooleanToNumIndicator asNum() {
 		return new BooleanToNumIndicator(this);
 	}
@@ -60,7 +65,12 @@ public class BooleanCombineIndicator extends CachedIndicator<Boolean> {
 
 		@Override
 		protected Num calculate(int index) {
-			return indicator.getValue(index) ? numOf(1) : numOf(0);
+			return indicator.getValue(index) ? one() : zero();
+		}
+
+		@Override
+		public int getUnstableBars() {
+			return indicator.getUnstableBars();
 		}
 	}
 }

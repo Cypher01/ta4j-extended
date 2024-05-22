@@ -45,4 +45,9 @@ public class ALMAIndicator extends CachedIndicator<Num> {
 
 		return numOf(sum / norm);
 	}
+
+	@Override
+	public int getUnstableBars() {
+		return barCount;
+	}
 }

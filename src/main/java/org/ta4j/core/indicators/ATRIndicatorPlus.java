@@ -49,6 +49,11 @@ public class ATRIndicatorPlus extends AbstractIndicator<Num> {
 		return atrIndicator.getValue(index);
 	}
 
+	@Override
+	public int getUnstableBars() {
+		return atrIndicator.getUnstableBars();
+	}
+
 	public enum Input {
 		SMA,
 		EMA,

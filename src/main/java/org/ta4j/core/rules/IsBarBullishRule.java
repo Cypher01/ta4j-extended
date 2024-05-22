@@ -19,6 +19,11 @@ public class IsBarBullishRule extends AbstractRule {
 			public Bar getValue(int index) {
 				return getBarSeries().getBar(index);
 			}
+
+			@Override
+			public int getUnstableBars() {
+				return 0;
+			}
 		});
 	}
 

@@ -47,4 +47,9 @@ public class BarValueIndicator extends AbstractIndicator<Num> {
 		final Bar bar = indicator.getValue(index);
 		return priceFunction.apply(bar);
 	}
+
+	@Override
+	public int getUnstableBars() {
+		return indicator.getUnstableBars();
+	}
 }

@@ -20,4 +20,9 @@ public class WaveTrendDIndicator extends AbstractIndicator<Num> {
 	public Num getValue(int index) {
 		return indicator.getValue(index);
 	}
+
+	@Override
+	public int getUnstableBars() {
+		return 4;
+	}
 }
