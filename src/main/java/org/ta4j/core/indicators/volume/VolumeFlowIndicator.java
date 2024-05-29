@@ -8,7 +8,7 @@ import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.CombineIndicator;
 import org.ta4j.core.indicators.helpers.PreviousValueIndicator;
-import org.ta4j.core.indicators.helpers.SumValuesIndicator;
+import org.ta4j.core.indicators.helpers.RunningTotalIndicator;
 import org.ta4j.core.indicators.helpers.TransformIndicator;
 import org.ta4j.core.indicators.helpers.TypicalPriceIndicator;
 import org.ta4j.core.indicators.helpers.VolumeIndicator;
@@ -43,7 +43,7 @@ public class VolumeFlowIndicator extends AbstractIndicator<Num> {
 		PreviousValueIndicator prevIndicator = new PreviousValueIndicator(indicator, 1);
 		CombineIndicator mf = CombineIndicator.minus(indicator, prevIndicator);
 		VPCIndicator vcp = new VPCIndicator(mf, cutoff, vc);
-		SumValuesIndicator sum = new SumValuesIndicator(vcp, barCount);
+		RunningTotalIndicator sum = new RunningTotalIndicator(vcp, barCount);
 		this.volumeFlowIndicator = CombineIndicator.divide(sum, vave);
 		this.barCount = barCount;
 	}
