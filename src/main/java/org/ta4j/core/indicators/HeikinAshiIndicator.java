@@ -4,6 +4,7 @@ import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBar;
 import org.ta4j.core.BaseBarSeries;
+import org.ta4j.core.Indicator;
 import org.ta4j.core.num.Num;
 
 import java.util.ArrayList;
@@ -13,8 +14,26 @@ import java.util.List;
  * Heikin Ashi indicator.
  */
 public class HeikinAshiIndicator extends RecursiveCachedIndicator<Bar> {
+	private final Indicator<Bar> indicator;
+
 	public HeikinAshiIndicator(BarSeries series) {
-		super(series);
+		this(new AbstractIndicator<>(series) {
+			@Override
+			public Bar getValue(int index) {
+				return series.getBar(index);
+			}
+
+			@Override
+			public int getUnstableBars() {
+				return 0;
+			}
+		});
+	}
+
+	public HeikinAshiIndicator(Indicator<Bar> indicator) {
+		super(indicator);
+
+		this.indicator = indicator;
 	}
 
 	public BarSeries getHeikinAshiBarSeries() {
@@ -34,11 +53,11 @@ public class HeikinAshiIndicator extends RecursiveCachedIndicator<Bar> {
 	@Override
 	protected Bar calculate(int index) {
 		if (index == 0) {
-			return getBarSeries().getBar(index);
+			return indicator.getValue(index);
 		}
 
 		Bar prevHaBar = getValue(index - 1);
-		Bar bar = getBarSeries().getBar(index);
+		Bar bar = indicator.getValue(index);
 
 		Num openPrice = bar.getOpenPrice();
 		Num highPrice = bar.getHighPrice();
