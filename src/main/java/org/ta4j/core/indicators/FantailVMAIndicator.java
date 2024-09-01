@@ -21,7 +21,7 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
 
 	public FantailVMAIndicator(BarSeries series, int adxLength, int weighting, int barCount) {
 		super(series);
-		fantailVMAIndicator = new SMAIndicator(new VarMAIndicator(series, adxLength, weighting), barCount);
+		this.fantailVMAIndicator = new SMAIndicator(new VarMAIndicator(series, adxLength, weighting), barCount);
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
 
 		@Override
 		public int getUnstableBars() {
-			return 0;
+			return 1;
 		}
 	}
 
@@ -104,7 +104,7 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
 
 		@Override
 		public int getUnstableBars() {
-			return 0;
+			return 1;
 		}
 	}
 
@@ -132,7 +132,7 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
 
 		@Override
 		public int getUnstableBars() {
-			return 0;
+			return 1;
 		}
 	}
 
@@ -161,7 +161,7 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
 
 		@Override
 		public int getUnstableBars() {
-			return 0;
+			return 1;
 		}
 	}
 
@@ -194,7 +194,7 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
 
 		@Override
 		public int getUnstableBars() {
-			return 0;
+			return 1;
 		}
 	}
 }

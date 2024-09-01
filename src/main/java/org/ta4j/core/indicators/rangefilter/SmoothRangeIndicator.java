@@ -6,6 +6,7 @@ import org.ta4j.core.indicators.AbstractIndicator;
 import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.CombineIndicator;
+import org.ta4j.core.indicators.helpers.NzIndicator;
 import org.ta4j.core.indicators.helpers.PreviousValueIndicator;
 import org.ta4j.core.indicators.helpers.TransformIndicator;
 import org.ta4j.core.num.Num;
@@ -25,7 +26,7 @@ public class SmoothRangeIndicator extends AbstractIndicator<Num> {
 	public SmoothRangeIndicator(Indicator<Num> indicator, int barCount, double multiplier) {
 		super(indicator.getBarSeries());
 
-		PreviousValueIndicator prev = new PreviousValueIndicator(indicator);
+		NzIndicator prev = new NzIndicator(new PreviousValueIndicator(indicator), indicator);
 		CombineIndicator diff = CombineIndicator.minus(indicator, prev);
 		TransformIndicator abs = TransformIndicator.abs(diff);
 		EMAIndicator avrng = new EMAIndicator(abs, barCount);

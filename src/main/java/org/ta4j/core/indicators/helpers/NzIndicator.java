@@ -10,13 +10,17 @@ import org.ta4j.core.num.Num;
  */
 public class NzIndicator extends CachedIndicator<Num> {
 	private final Indicator<Num> indicator;
-	private final Num replacement;
+	private final Indicator<Num> replacement;
 
 	public NzIndicator(Indicator<Num> indicator) {
 		this(indicator, indicator.zero());
 	}
 
 	public NzIndicator(Indicator<Num> indicator, Num replacement) {
+		this(indicator, new ConstantIndicator<>(indicator.getBarSeries(), replacement));
+	}
+
+	public NzIndicator(Indicator<Num> indicator, Indicator<Num> replacement) {
 		super(indicator);
 
 		this.indicator = indicator;
@@ -26,7 +30,7 @@ public class NzIndicator extends CachedIndicator<Num> {
 	@Override
 	protected Num calculate(int index) {
 		Num value = indicator.getValue(index);
-		return value.isNaN() ? replacement : value;
+		return value.isNaN() ? replacement.getValue(index) : value;
 	}
 
 	@Override
