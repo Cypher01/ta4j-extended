@@ -17,7 +17,7 @@ public class ChangeIndicator extends AbstractIndicator<Num> {
 	}
 
 	public ChangeIndicator(Indicator<Num> indicator) {
-		this(indicator.getBarSeries(), 1);
+		this(indicator, 1);
 	}
 
 	public ChangeIndicator(BarSeries series, int barCount) {
@@ -42,6 +42,6 @@ public class ChangeIndicator extends AbstractIndicator<Num> {
 
 	@Override
 	public int getUnstableBars() {
-		return barCount;
+		return Math.max(barCount, indicator.getUnstableBars());
 	}
 }
