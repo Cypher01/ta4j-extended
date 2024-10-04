@@ -26,13 +26,13 @@ public class GChannelLowerBandIndicator extends CachedIndicator<Num> {
 	@Override
 	protected Num calculate(int index) {
 		if (index == 0) {
-			return zero();
+			return getBarSeries().numFactory().zero();
 		}
 
 		Num prevValueLower = getValue(index - 1);
 		Num prevValueUpper = upperBandIndicator.getValue(index - 1);
 
-		return indicator.getValue(index).min(prevValueLower).plus(prevValueUpper.minus(prevValueLower).dividedBy(numOf(barCount)));
+		return indicator.getValue(index).min(prevValueLower).plus(prevValueUpper.minus(prevValueLower).dividedBy(getBarSeries().numFactory().numOf(barCount)));
 	}
 
 	@Override

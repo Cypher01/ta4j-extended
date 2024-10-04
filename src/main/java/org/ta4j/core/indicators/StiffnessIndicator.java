@@ -3,7 +3,6 @@ package org.ta4j.core.indicators;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.helpers.BooleanCombineIndicator;
-import org.ta4j.core.indicators.helpers.BooleanTransformIndicator.BooleanTransformType;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.CombineIndicator;
 import org.ta4j.core.indicators.helpers.RunningTotalIndicator;
@@ -27,7 +26,7 @@ public class StiffnessIndicator extends AbstractIndicator<Num> {
 		super(indicator.getBarSeries());
 
 		CombineIndicator bound = CombineIndicator.minus(new SMAIndicator(indicator, barCount), TransformIndicator.divide(new StandardDeviationIndicator(indicator, barCount), 5));
-		RunningTotalIndicator sumAbove = new RunningTotalIndicator(new BooleanCombineIndicator(indicator, bound, BooleanTransformType.isGreaterThan).asNum(), stiffLength);
+		RunningTotalIndicator sumAbove = new RunningTotalIndicator(new BooleanCombineIndicator(indicator, bound, BooleanCombineIndicator.BooleanTransformType.isGreaterThan).asNum(), stiffLength);
 		this.stiffness = new EMAIndicator(TransformIndicator.divide(TransformIndicator.multiply(sumAbove, 100), stiffLength), stiffSmooth);
 		this.unstableBars = Math.max(Math.max(barCount, stiffLength), stiffSmooth);
 	}

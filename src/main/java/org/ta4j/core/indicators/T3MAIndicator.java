@@ -30,10 +30,10 @@ public class T3MAIndicator extends AbstractIndicator<Num> {
 		EMAIndicator xe6 = new EMAIndicator(xe5, barCount);
 
 		double b = 0.7;
-		Num c1 = numOf(-b * b * b);
-		Num c2 = numOf(3 * b * b + 3 * b * b * b);
-		Num c3 = numOf(-6 * b * b - 3 * b - 3 * b * b * b);
-		Num c4 = numOf(1 + 3 * b + b * b * b + 3 * b * b);
+		Num c1 = getBarSeries().numFactory().numOf(-b * b * b);
+		Num c2 = getBarSeries().numFactory().numOf(3 * b * b + 3 * b * b * b);
+		Num c3 = getBarSeries().numFactory().numOf(-6 * b * b - 3 * b - 3 * b * b * b);
+		Num c4 = getBarSeries().numFactory().numOf(1 + 3 * b + b * b * b + 3 * b * b);
 
 		TransformIndicator addend1 = TransformIndicator.multiply(xe6, c1.doubleValue());
 		TransformIndicator addend2 = TransformIndicator.multiply(xe5, c2.doubleValue());

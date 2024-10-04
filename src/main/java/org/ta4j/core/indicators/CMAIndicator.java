@@ -23,7 +23,7 @@ public class CMAIndicator extends CachedIndicator<Num> {
 	public CMAIndicator(Indicator<Num> indicator, int barCount) {
 		super(indicator.getBarSeries());
 
-		this.tolerance = numOf(10).pow(-5);
+		this.tolerance = getBarSeries().numFactory().numOf(10).pow(-5);
 		this.indicator = indicator;
 		this.sma = new SMAIndicator(indicator, barCount);
 		this.varianceIndicator = new VarianceIndicator(indicator, barCount);
@@ -44,15 +44,15 @@ public class CMAIndicator extends CachedIndicator<Num> {
 
 		Num v1 = varianceIndicator.getValue(index);
 		Num v2 = prevValueOrSma.minus(sma.getValue(index)).pow(2);
-		Num v3 = v1.isZero() || v2.isZero() ? one() : v2.dividedBy(v1.plus(v2));
+		Num v3 = v1.isZero() || v2.isZero() ? getBarSeries().numFactory().one() : v2.dividedBy(v1.plus(v2));
 
-		Num err = one();
-		Num kPrev = one();
-		Num k = one();
+		Num err = getBarSeries().numFactory().one();
+		Num kPrev = getBarSeries().numFactory().one();
+		Num k = getBarSeries().numFactory().one();
 
 		for (int i = 0; i < 5000; i++) {
 			if (err.isGreaterThan(tolerance)) {
-				k = v3.multipliedBy(kPrev).multipliedBy(numOf(2).minus(kPrev));
+				k = v3.multipliedBy(kPrev).multipliedBy(getBarSeries().numFactory().numOf(2).minus(kPrev));
 				err = kPrev.minus(k);
 				kPrev = k;
 			}

@@ -13,7 +13,7 @@ public class SubstituteIndicator extends CachedIndicator<Num> {
 	private final Num substitute;
 
 	public SubstituteIndicator(Indicator<Num> indicator, Number value, Number substitute) {
-		this(indicator, indicator.numOf(value), indicator.numOf(substitute));
+		this(indicator, indicator.getBarSeries().numFactory().numOf(value), indicator.getBarSeries().numFactory().numOf(substitute));
 	}
 
 	public SubstituteIndicator(Indicator<Num> indicator, Num value, Num substitute) {

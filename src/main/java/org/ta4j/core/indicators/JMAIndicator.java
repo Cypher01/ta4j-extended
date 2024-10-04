@@ -69,10 +69,13 @@ public class JMAIndicator extends CachedIndicator<Num> {
 		@Override
 		protected Num calculate(int index) {
 			if (index == 0) {
-				return indicator.getValue(index).multipliedBy(numOf(1d - alpha));
+				return indicator.getValue(index).multipliedBy(getBarSeries().numFactory().numOf(1d - alpha));
 			}
 
-			return indicator.getValue(index).multipliedBy(numOf(1d - alpha)).plus(numOf(alpha).multipliedBy(getValue(index - 1)));
+			return indicator
+        .getValue(index)
+        .multipliedBy(getBarSeries().numFactory().numOf(1d - alpha))
+        .plus(getBarSeries().numFactory().numOf(alpha).multipliedBy(getValue(index - 1)));
 		}
 
 		@Override
@@ -97,10 +100,14 @@ public class JMAIndicator extends CachedIndicator<Num> {
 		@Override
 		protected Num calculate(int index) {
 			if (index == 0) {
-				return indicator.getValue(index).minus(e0Indicator.getValue(index)).multipliedBy(numOf(1d - beta));
+				return indicator.getValue(index).minus(e0Indicator.getValue(index)).multipliedBy(getBarSeries().numFactory().numOf(1d - beta));
 			}
 
-			return indicator.getValue(index).minus(e0Indicator.getValue(index)).multipliedBy(numOf(1d - beta)).plus(numOf(beta).multipliedBy(getValue(index - 1)));
+			return indicator
+        .getValue(index)
+        .minus(e0Indicator.getValue(index))
+        .multipliedBy(getBarSeries().numFactory().numOf(1d - beta))
+        .plus(getBarSeries().numFactory().numOf(beta).multipliedBy(getValue(index - 1)));
 		}
 
 		@Override
@@ -129,10 +136,19 @@ public class JMAIndicator extends CachedIndicator<Num> {
 		@Override
 		protected Num calculate(int index) {
 			if (index == 0) {
-				return e0Indicator.getValue(index).plus(e1Indicator.getValue(index).multipliedBy(numOf(phaseRatio))).minus(nzPrevJmaIndicator.getValue(index)).multipliedBy(numOf(1 - alpha).pow(2));
+				return e0Indicator
+          .getValue(index)
+          .plus(e1Indicator.getValue(index).multipliedBy(getBarSeries().numFactory().numOf(phaseRatio)))
+          .minus(nzPrevJmaIndicator.getValue(index))
+          .multipliedBy(getBarSeries().numFactory().numOf(1 - alpha).pow(2));
 			}
 
-			return e0Indicator.getValue(index).plus(e1Indicator.getValue(index).multipliedBy(numOf(phaseRatio))).minus(nzPrevJmaIndicator.getValue(index)).multipliedBy(numOf(1 - alpha).pow(2)).plus(numOf(alpha).pow(2).multipliedBy(getValue(index - 1)));
+			return e0Indicator
+        .getValue(index)
+        .plus(e1Indicator.getValue(index).multipliedBy(getBarSeries().numFactory().numOf(phaseRatio)))
+        .minus(nzPrevJmaIndicator.getValue(index))
+        .multipliedBy(getBarSeries().numFactory().numOf(1 - alpha).pow(2))
+        .plus(getBarSeries().numFactory().numOf(alpha).pow(2).multipliedBy(getValue(index - 1)));
 		}
 
 		@Override

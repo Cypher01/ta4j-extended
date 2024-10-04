@@ -13,7 +13,7 @@ public class NzIndicator extends CachedIndicator<Num> {
 	private final Indicator<Num> replacement;
 
 	public NzIndicator(Indicator<Num> indicator) {
-		this(indicator, indicator.zero());
+		this(indicator, indicator.getBarSeries().numFactory().zero());
 	}
 
 	public NzIndicator(Indicator<Num> indicator, Num replacement) {

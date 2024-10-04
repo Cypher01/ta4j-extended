@@ -30,15 +30,15 @@ public class ALMAIndicator extends CachedIndicator<Num> {
 
 	@Override
 	protected Num calculate(int index) {
-		Num norm = zero();
-		Num sum = zero();
+		Num norm = getBarSeries().numFactory().zero();
+		Num sum = getBarSeries().numFactory().zero();
 
 		for (int i = barCount - 1; i >= 0; i--) {
 			int valueIndex = index - barCount + i + 1;
 			if (valueIndex < 0) {
 				break;
 			}
-			Num weight = numOf(Math.exp(-1d * Math.pow(i - m, 2d) / (2d * Math.pow(s, 2d))));
+			Num weight = getBarSeries().numFactory().numOf(Math.exp(-1d * Math.pow(i - m, 2d) / (2d * Math.pow(s, 2d))));
 			norm = norm.plus(weight);
 			sum = sum.plus(indicator.getValue(valueIndex).multipliedBy(weight));
 		}

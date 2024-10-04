@@ -4,6 +4,7 @@ import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.helpers.CombineIndicator;
 import org.ta4j.core.indicators.helpers.TransformIndicator;
 import org.ta4j.core.num.Num;
+import org.ta4j.core.num.NumFactory;
 
 /**
  * Apirine Slow RSI (SRSI) indicator by LazyBear.
@@ -27,11 +28,13 @@ public class SRSIIndicator extends CachedIndicator<Num> {
 
 	@Override
 	protected Num calculate(int index) {
+    NumFactory numFactory = getBarSeries().numFactory();
+
 		if (r5.getValue(index).isZero()) {
-			return hundred();
+			return numFactory.hundred();
 		}
 
-		return hundred().minus(hundred().dividedBy(one().plus(r4.getValue(index).dividedBy(r5.getValue(index)))));
+		return numFactory.hundred().minus(numFactory.hundred().dividedBy(numFactory.one().plus(r4.getValue(index).dividedBy(r5.getValue(index)))));
 	}
 
 	@Override

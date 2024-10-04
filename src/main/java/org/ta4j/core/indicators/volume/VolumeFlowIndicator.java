@@ -82,7 +82,7 @@ public class VolumeFlowIndicator extends AbstractIndicator<Num> {
 			} else if (mf.getValue(index).isLessThan(cutoffNeg.getValue(index))) {
 				return vcNeg.getValue(index);
 			} else {
-				return zero();
+				return getBarSeries().numFactory().zero();
 			}
 		}
 

@@ -31,7 +31,7 @@ public class RangeFilterIndicator extends CachedIndicator<Num> {
 
 	@Override
 	protected Num calculate(int index) {
-		Num prevValue = zero();
+		Num prevValue = getBarSeries().numFactory().zero();
 
 		if (index > 0) {
 			prevValue = getValue(index - 1);

@@ -2,7 +2,6 @@ package org.ta4j.core.indicators.helpers;
 
 import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.CachedIndicator;
-import org.ta4j.core.indicators.helpers.BooleanTransformIndicator.BooleanTransformType;
 import org.ta4j.core.num.Num;
 
 /**
@@ -15,6 +14,14 @@ public class BooleanCombineIndicator extends CachedIndicator<Boolean> {
 	private final Indicator<Num> indicator1;
 	private final Indicator<Num> indicator2;
 	private final BooleanTransformType type;
+
+  public enum BooleanTransformType {
+    equals,
+    isGreaterThan,
+    isGreaterThanOrEqual,
+    isLessThan,
+    isLessThanOrEqual
+  }
 
 	public BooleanCombineIndicator(Indicator<Num> indicator1, Indicator<Num> indicator2, BooleanTransformType type) {
 		super(indicator1);
@@ -65,7 +72,7 @@ public class BooleanCombineIndicator extends CachedIndicator<Boolean> {
 
 		@Override
 		protected Num calculate(int index) {
-			return indicator.getValue(index) ? one() : zero();
+			return indicator.getValue(index) ? getBarSeries().numFactory().one() : getBarSeries().numFactory().zero();
 		}
 
 		@Override

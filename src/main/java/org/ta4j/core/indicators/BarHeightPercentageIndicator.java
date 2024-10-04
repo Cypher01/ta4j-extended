@@ -49,9 +49,9 @@ public class BarHeightPercentageIndicator extends AbstractIndicator<Num> {
 		}
 
 		if (range.isZero()) {
-			return zero();
+			return getBarSeries().numFactory().zero();
 		} else {
-			return range.dividedBy(indicator.getValue(index)).multipliedBy(hundred());
+			return range.dividedBy(indicator.getValue(index)).multipliedBy(getBarSeries().numFactory().hundred());
 		}
 	}
 

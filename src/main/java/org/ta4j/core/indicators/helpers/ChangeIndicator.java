@@ -34,7 +34,7 @@ public class ChangeIndicator extends AbstractIndicator<Num> {
 	@Override
 	public Num getValue(int index) {
 		if (index < barCount) {
-			return zero();
+			return getBarSeries().numFactory().zero();
 		}
 
 		return indicator.getValue(index).minus(indicator.getValue(index - barCount));

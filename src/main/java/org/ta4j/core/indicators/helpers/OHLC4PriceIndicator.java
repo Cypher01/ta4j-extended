@@ -22,7 +22,7 @@ public class OHLC4PriceIndicator extends CachedIndicator<Num> {
 		Num lowPrice = bar.getLowPrice();
 		Num closePrice = bar.getClosePrice();
 
-		return openPrice.plus(highPrice).plus(lowPrice).plus(closePrice).dividedBy(numOf(4));
+		return openPrice.plus(highPrice).plus(lowPrice).plus(closePrice).dividedBy(getBarSeries().numFactory().numOf(4));
 	}
 
 	@Override

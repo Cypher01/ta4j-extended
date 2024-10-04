@@ -21,7 +21,7 @@ public class HLCC4PriceIndicator extends CachedIndicator<Num> {
 		Num lowPrice = bar.getLowPrice();
 		Num closePrice = bar.getClosePrice();
 
-		return highPrice.plus(lowPrice).plus(closePrice).plus(closePrice).dividedBy(numOf(4));
+		return highPrice.plus(lowPrice).plus(closePrice).plus(closePrice).dividedBy(getBarSeries().numFactory().numOf(4));
 	}
 
 	@Override

@@ -33,9 +33,9 @@ public class HurstExponentIndicator extends CachedIndicator<Num> {
 		TransformIndicator distanceFromMean = TransformIndicator.minus(pnl, meanPnl.getValue(index).doubleValue());
 		TransformIndicator distanceFromMeanPow = TransformIndicator.pow(distanceFromMean, 2);
 
-		Num cum = zero();
-		Num cumMin = numOf(Double.MAX_VALUE);
-		Num cumMax = numOf(Double.MIN_VALUE);
+		Num cum = getBarSeries().numFactory().zero();
+		Num cumMin = getBarSeries().numFactory().numOf(Double.MAX_VALUE);
+		Num cumMax = getBarSeries().numFactory().numOf(Double.MIN_VALUE);
 
 		for (int i = Math.max(0, index - barCount + 1); i <= index; i++) {
 			cum = cum.plus(distanceFromMean.getValue(i));
@@ -43,16 +43,16 @@ public class HurstExponentIndicator extends CachedIndicator<Num> {
 			cumMax = cumMax.max(cum);
 		}
 
-		Num devSum = zero();
+		Num devSum = getBarSeries().numFactory().zero();
 
 		for (int i = Math.max(0, index - barCount + 1); i <= index; i++) {
 			devSum = devSum.plus(distanceFromMeanPow.getValue(i));
 		}
 
-		Num sd = devSum.dividedBy(numOf(barCount - 1)).sqrt();
+		Num sd = devSum.dividedBy(getBarSeries().numFactory().numOf(barCount - 1)).sqrt();
 		Num rs = cumMax.minus(cumMin).dividedBy(sd);
 
-		return rs.log().dividedBy(numOf(barCount).log());
+		return rs.log().dividedBy(getBarSeries().numFactory().numOf(barCount).log());
 	}
 
 	@Override

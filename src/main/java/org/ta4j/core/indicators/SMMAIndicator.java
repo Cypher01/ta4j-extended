@@ -22,7 +22,10 @@ public class SMMAIndicator extends CachedIndicator<Num> {
 			return indicator.getValue(0);
 		}
 
-		return getValue(index - 1).multipliedBy(numOf(barCount - 1)).plus(indicator.getValue(index)).dividedBy(numOf(barCount));
+		return getValue(index - 1)
+      .multipliedBy(getBarSeries().numFactory().numOf(barCount - 1))
+      .plus(indicator.getValue(index))
+      .dividedBy(getBarSeries().numFactory().numOf(barCount));
 	}
 
 	@Override

@@ -1,11 +1,10 @@
 package org.ta4j.core.indicators;
 
-import org.ta4j.core.Bar;
-import org.ta4j.core.BarSeries;
-import org.ta4j.core.BaseBarSeries;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.ta4j.core.Bar;
+import org.ta4j.core.BarSeries;
+import org.ta4j.core.BaseBarSeriesBuilder;
 
 /**
  * Smoothed Heikin Ashi indicator by jackvmk.
@@ -33,7 +32,7 @@ public class SmoothedHeikinAshiIndicator extends AbstractIndicator<Bar> {
 			bars.add(getValue(i));
 		}
 
-		return new BaseBarSeries(name, bars);
+    return new BaseBarSeriesBuilder().withName(name).withBars(bars).build();
 	}
 
 	@Override

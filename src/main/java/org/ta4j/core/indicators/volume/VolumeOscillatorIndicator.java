@@ -37,7 +37,7 @@ public class VolumeOscillatorIndicator extends CachedIndicator<Num> {
 	protected Num calculate(int index) {
 		Num fast = fastMaIndicator.getValue(index);
 		Num slow = slowMaIndicator.getValue(index);
-		return hundred().multipliedBy(fast.minus(slow)).dividedBy(slow);
+		return getBarSeries().numFactory().hundred().multipliedBy(fast.minus(slow)).dividedBy(slow);
 	}
 
 	@Override

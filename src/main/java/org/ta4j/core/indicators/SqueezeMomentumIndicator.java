@@ -45,8 +45,8 @@ public class SqueezeMomentumIndicator extends AbstractIndicator<Num> {
 
 		BollingerBandsMiddleIndicator middleBB = new BollingerBandsMiddleIndicator(new SMAIndicator(indicator, bbLength));
 		StandardDeviationIndicator standardDev = new StandardDeviationIndicator(indicator, bbLength);
-		this.upperBB = new BollingerBandsUpperIndicator(middleBB, standardDev, numOf(bbMultFactor));
-		this.lowerBB = new BollingerBandsLowerIndicator(middleBB, standardDev, numOf(bbMultFactor));
+		this.upperBB = new BollingerBandsUpperIndicator(middleBB, standardDev, getBarSeries().numFactory().numOf(bbMultFactor));
+		this.lowerBB = new BollingerBandsLowerIndicator(middleBB, standardDev, getBarSeries().numFactory().numOf(bbMultFactor));
 
 		Indicator<Num> ma = new SMAIndicator(indicator, kcLength);
 		Indicator<Num> range = TransformIndicator.multiply(new ATRIndicatorPlus(series, kcLength, Input.SMA), kcMultFactor);

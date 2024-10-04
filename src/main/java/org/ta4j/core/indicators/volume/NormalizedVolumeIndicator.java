@@ -28,7 +28,7 @@ public class NormalizedVolumeIndicator extends AbstractIndicator<Num> {
 
 	@Override
 	public Num getValue(int index) {
-		return volumeIndicator.getValue(index).dividedBy(smaIndicator.getValue(index)).multipliedBy(hundred());
+		return volumeIndicator.getValue(index).dividedBy(smaIndicator.getValue(index)).multipliedBy(getBarSeries().numFactory().hundred());
 	}
 
 	@Override

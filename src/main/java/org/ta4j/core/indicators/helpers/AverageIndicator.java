@@ -21,13 +21,13 @@ public class AverageIndicator extends CachedIndicator<Num> {
 
 	@Override
 	protected Num calculate(int index) {
-		Num value = zero();
+		Num value = getBarSeries().numFactory().zero();
 
 		for (Indicator<Num> indicator : indicators) {
 			value = value.plus(indicator.getValue(index));
 		}
 
-		return value.dividedBy(numOf(indicators.size()));
+		return value.dividedBy(getBarSeries().numFactory().numOf(indicators.size()));
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public class RangeFilterRisingIndicator extends CachedIndicator<Num> {
 
 	@Override
 	protected Num calculate(int index) {
-		Num prevValue = zero();
+		Num prevValue = getBarSeries().numFactory().zero();
 
 		if (index > 0) {
 			prevValue = getValue(index - 1);
@@ -28,9 +28,9 @@ public class RangeFilterRisingIndicator extends CachedIndicator<Num> {
 		Num rangeFilterPrevValue = rangeFilterIndicator.getValue(index - 1);
 
 		if (rangeFilterValue.isGreaterThan(rangeFilterPrevValue)) {
-			return prevValue.plus(one());
+			return prevValue.plus(getBarSeries().numFactory().one());
 		} else if (rangeFilterValue.isLessThan(rangeFilterPrevValue)) {
-			return zero();
+			return getBarSeries().numFactory().zero();
 		} else {
 			return prevValue;
 		}

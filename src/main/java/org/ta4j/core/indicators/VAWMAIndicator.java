@@ -27,12 +27,12 @@ public class VAWMAIndicator extends CachedIndicator<Num> {
 			return indicator.getValue(0);
 		}
 
-		Num sum = zero();
-		Num vol = zero();
+		Num sum = getBarSeries().numFactory().zero();
+		Num vol = getBarSeries().numFactory().zero();
 		int weight = 1;
 
 		for (int i = Math.max(1, index - barCount + 1); i <= index; i++) {
-			Num weightedVolume = volumeIndicator.getValue(i).multipliedBy(numOf(weight));
+			Num weightedVolume = volumeIndicator.getValue(i).multipliedBy(getBarSeries().numFactory().numOf(weight));
 			vol = vol.plus(weightedVolume);
 			sum = sum.plus(indicator.getValue(i).multipliedBy(weightedVolume));
 			weight++;

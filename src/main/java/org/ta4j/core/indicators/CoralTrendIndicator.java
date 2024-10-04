@@ -70,7 +70,7 @@ public class CoralTrendIndicator extends AbstractIndicator<Num> {
 			super(indicator);
 
 			this.addend1 = TransformIndicator.multiply(indicator, c1);
-			this.c2 = indicator.numOf(c2);
+			this.c2 = getBarSeries().numFactory().numOf(c2);
 		}
 
 		@Override

@@ -27,7 +27,7 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 		Num cu = cuIndicator.getValue(index);
 		Num cd = cdIndicator.getValue(index);
 		Num value = cu.dividedBy(cu.plus(cd));
-		return value.isNaN() ? zero() : value; // division by zero returns NaN, which is resolved to zero
+		return value.isNaN() ? getBarSeries().numFactory().zero() : value; // division by zero returns NaN, which is resolved to zero
 	}
 
 	@Override
@@ -44,14 +44,14 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 			super(indicator);
 
 			this.indicator = indicator;
-			this.alpha = numOf(alpha);
-			this.gamma = numOf(1 - alpha);
+			this.alpha = getBarSeries().numFactory().numOf(alpha);
+			this.gamma = getBarSeries().numFactory().numOf(1 - alpha);
 		}
 
 		@Override
 		protected Num calculate(int index) {
 			if (index == 0) {
-				return zero();
+				return getBarSeries().numFactory().zero();
 			}
 
 			return alpha.multipliedBy(indicator.getValue(index)).plus(gamma.multipliedBy(getValue(index - 1)));
@@ -72,14 +72,14 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 			super(indicator);
 
 			this.indicator = indicator;
-			this.gamma = numOf(1 - alpha);
-			this.negGamma = numOf((-1) * (1 - alpha));
+			this.gamma = getBarSeries().numFactory().numOf(1 - alpha);
+			this.negGamma = getBarSeries().numFactory().numOf((-1) * (1 - alpha));
 		}
 
 		@Override
 		protected Num calculate(int index) {
 			if (index == 0) {
-				return zero();
+				return getBarSeries().numFactory().zero();
 			}
 
 			return negGamma.multipliedBy(indicator.getValue(index)).plus(indicator.getValue(index - 1)).plus(gamma.multipliedBy(getValue(index - 1)));
@@ -108,9 +108,9 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 
 		@Override
 		protected Num calculate(int index) {
-			Num addend1 = l0Indicator.getValue(index).minus(l1Indicator.getValue(index)).max(zero());
-			Num addend2 = l1Indicator.getValue(index).minus(l2Indicator.getValue(index)).max(zero());
-			Num addend3 = l2Indicator.getValue(index).minus(l3Indicator.getValue(index)).max(zero());
+			Num addend1 = l0Indicator.getValue(index).minus(l1Indicator.getValue(index)).max(getBarSeries().numFactory().zero());
+			Num addend2 = l1Indicator.getValue(index).minus(l2Indicator.getValue(index)).max(getBarSeries().numFactory().zero());
+			Num addend3 = l2Indicator.getValue(index).minus(l3Indicator.getValue(index)).max(getBarSeries().numFactory().zero());
 
 			return addend1.plus(addend2).plus(addend3);
 		}
@@ -138,9 +138,9 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 
 		@Override
 		protected Num calculate(int index) {
-			Num addend1 = l1Indicator.getValue(index).minus(l0Indicator.getValue(index)).max(zero());
-			Num addend2 = l2Indicator.getValue(index).minus(l1Indicator.getValue(index)).max(zero());
-			Num addend3 = l3Indicator.getValue(index).minus(l2Indicator.getValue(index)).max(zero());
+			Num addend1 = l1Indicator.getValue(index).minus(l0Indicator.getValue(index)).max(getBarSeries().numFactory().zero());
+			Num addend2 = l2Indicator.getValue(index).minus(l1Indicator.getValue(index)).max(getBarSeries().numFactory().zero());
+			Num addend3 = l3Indicator.getValue(index).minus(l2Indicator.getValue(index)).max(getBarSeries().numFactory().zero());
 
 			return addend1.plus(addend2).plus(addend3);
 		}

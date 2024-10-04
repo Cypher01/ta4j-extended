@@ -19,19 +19,19 @@ public class VIDYAIndicator extends CachedIndicator<Num> {
 		this.indicator = indicator;
 		this.cmoIndicator = new CMOIndicator(indicator, barCount);
 		this.barCount = barCount;
-		this.alpha = numOf(2d / (barCount + 1d));
+		this.alpha = getBarSeries().numFactory().numOf(2d / (barCount + 1d));
 	}
 
 	@Override
 	protected Num calculate(int index) {
 		if (index == 0) {
-			return zero();
+			return getBarSeries().numFactory().zero();
 		}
 
-		Num cmoAbsNormValue = cmoIndicator.getValue(index).abs().dividedBy(hundred());
+		Num cmoAbsNormValue = cmoIndicator.getValue(index).abs().dividedBy(getBarSeries().numFactory().hundred());
 		Num prevValue = getValue(index - 1);
 
-		return indicator.getValue(index).multipliedBy(alpha).multipliedBy(cmoAbsNormValue).plus(prevValue.multipliedBy(one().minus(alpha.multipliedBy(cmoAbsNormValue))));
+		return indicator.getValue(index).multipliedBy(alpha).multipliedBy(cmoAbsNormValue).plus(prevValue.multipliedBy(getBarSeries().numFactory().one().minus(alpha.multipliedBy(cmoAbsNormValue))));
 	}
 
 	@Override
