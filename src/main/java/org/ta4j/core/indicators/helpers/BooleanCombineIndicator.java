@@ -4,7 +4,7 @@ import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.CachedIndicator;
 import org.ta4j.core.num.Num;
 
-import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 
 /**
  * Boolean combine indicator.
@@ -15,7 +15,7 @@ import java.util.function.BiFunction;
 public class BooleanCombineIndicator extends CachedIndicator<Boolean> {
 	private final Indicator<Num> indicator1;
 	private final Indicator<Num> indicator2;
-	private final BiFunction<Num, Num, Boolean> transform;
+	private final BiPredicate<Num, Num> transform;
 
 	public static BooleanCombineIndicator isEqual(Indicator<Num> indicator1, Indicator<Num> indicator2) {
 		return new BooleanCombineIndicator(indicator1, indicator2, Num::isEqual);
@@ -37,7 +37,7 @@ public class BooleanCombineIndicator extends CachedIndicator<Boolean> {
 		return new BooleanCombineIndicator(indicator1, indicator2, Num::isLessThanOrEqual);
 	}
 
-	public BooleanCombineIndicator(Indicator<Num> indicator1, Indicator<Num> indicator2, BiFunction<Num, Num, Boolean> transform) {
+	public BooleanCombineIndicator(Indicator<Num> indicator1, Indicator<Num> indicator2, BiPredicate<Num, Num> transform) {
 		super(indicator1);
 
 		this.indicator1 = indicator1;
@@ -47,7 +47,7 @@ public class BooleanCombineIndicator extends CachedIndicator<Boolean> {
 
 	@Override
 	protected Boolean calculate(int index) {
-		return transform.apply(indicator1.getValue(index), indicator2.getValue(index));
+		return transform.test(indicator1.getValue(index), indicator2.getValue(index));
 	}
 
 	@Override
