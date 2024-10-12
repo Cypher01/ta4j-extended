@@ -20,7 +20,7 @@ public class SwitchRule extends AbstractRule {
 			return false;
 		}
 
-		boolean satisfied = rule.isSatisfied(index) != rule.isSatisfied(index - 1);
+		boolean satisfied = rule.isSatisfied(index, tradingRecord) != rule.isSatisfied(index - 1, tradingRecord);
 		traceIsSatisfied(index, satisfied);
 		return satisfied;
 	}
