@@ -8,16 +8,10 @@ import org.ta4j.core.num.Num;
 
 /**
  * Bar Height Percentage Indicator.
- *
  * Get the difference in percentage between open and close or high and low
  * in relation to a given indicator, by default the close price.
  */
 public class BarHeightPercentageIndicator extends AbstractIndicator<Num> {
-	public enum BarHeightType {
-		openClose,
-		highLow
-	}
-
 	private final Indicator<Num> indicator;
 	private final BarHeightType type;
 
@@ -58,5 +52,10 @@ public class BarHeightPercentageIndicator extends AbstractIndicator<Num> {
 	@Override
 	public int getUnstableBars() {
 		return indicator.getUnstableBars();
+	}
+
+	public enum BarHeightType {
+		openClose,
+		highLow
 	}
 }
