@@ -7,8 +7,11 @@ import org.ta4j.core.num.Num;
 
 /**
  * Change indicator aka. momentum indicator.
+ * Compared to the rate of change (ROC) indicator, this indicator calculates the absolute change value,
+ * whereas the ROC indicator calculates the relative change (percentage).
  */
 public class ChangeIndicator extends AbstractIndicator<Num> {
+	private final Indicator<Num> changeIndicator;
 	private final Indicator<Num> indicator;
 	private final int barCount;
 
@@ -27,6 +30,7 @@ public class ChangeIndicator extends AbstractIndicator<Num> {
 	public ChangeIndicator(Indicator<Num> indicator, int barCount) {
 		super(indicator.getBarSeries());
 
+		this.changeIndicator = CombineIndicator.minus(indicator, new PreviousValueIndicator(indicator, barCount));
 		this.indicator = indicator;
 		this.barCount = barCount;
 	}
@@ -37,7 +41,7 @@ public class ChangeIndicator extends AbstractIndicator<Num> {
 			return getBarSeries().numFactory().zero();
 		}
 
-		return indicator.getValue(index).minus(indicator.getValue(index - barCount));
+		return changeIndicator.getValue(index);
 	}
 
 	@Override
