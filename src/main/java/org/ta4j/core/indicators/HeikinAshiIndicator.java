@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
-import org.ta4j.core.BaseBarBuilder;
+import org.ta4j.core.bars.BaseBarBuilder;
 import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.num.Num;
