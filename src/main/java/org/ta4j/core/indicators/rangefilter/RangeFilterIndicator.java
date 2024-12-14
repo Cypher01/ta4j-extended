@@ -8,58 +8,57 @@ import org.ta4j.core.num.Num;
 
 /**
  * Range Filter indicator by guikroth.
- * <a href="https://www.tradingview.com/script/J8GzFGfD-Range-Filter-Buy-and-Sell-5min-guikroth-version/">TradingView</a>
+ * <a
+ * href="https://www.tradingview.com/script/J8GzFGfD-Range-Filter-Buy-and-Sell-5min-guikroth-version/">TradingView</a>
  */
 public class RangeFilterIndicator extends CachedIndicator<Num> {
-	private final Indicator<Num> indicator;
-	private final SmoothRangeIndicator smoothRangeIndicator;
+    private final Indicator<Num> indicator;
+    private final SmoothRangeIndicator smoothRangeIndicator;
 
-	public RangeFilterIndicator(BarSeries series, int barCount, double multiplier) {
-		this(new ClosePriceIndicator(series), barCount, multiplier);
-	}
+    public RangeFilterIndicator(BarSeries series, int barCount, double multiplier) {
+        this(new ClosePriceIndicator(series), barCount, multiplier);
+    }
 
-	public RangeFilterIndicator(Indicator<Num> indicator, int barCount, double multiplier) {
-		this(indicator, new SmoothRangeIndicator(indicator, barCount, multiplier));
-	}
+    public RangeFilterIndicator(Indicator<Num> indicator, int barCount, double multiplier) {
+        this(indicator, new SmoothRangeIndicator(indicator, barCount, multiplier));
+    }
 
-	public RangeFilterIndicator(Indicator<Num> indicator, SmoothRangeIndicator smoothRangeIndicator) {
-		super(indicator);
+    public RangeFilterIndicator(Indicator<Num> indicator, SmoothRangeIndicator smoothRangeIndicator) {
+        super(indicator);
 
-		this.indicator = indicator;
-		this.smoothRangeIndicator = smoothRangeIndicator;
-	}
+        this.indicator = indicator;
+        this.smoothRangeIndicator = smoothRangeIndicator;
+    }
 
-	@Override
-	protected Num calculate(int index) {
-		Num prevValue = getBarSeries().numFactory().zero();
+    @Override protected Num calculate(int index) {
+        Num prevValue = getBarSeries().numFactory().zero();
 
-		if (index > 0) {
-			prevValue = getValue(index - 1);
-		}
+        if (index > 0) {
+            prevValue = getValue(index - 1);
+        }
 
-		Num x = indicator.getValue(index);
-		Num r = smoothRangeIndicator.getValue(index);
-		Num rngfilt;
+        Num x = indicator.getValue(index);
+        Num r = smoothRangeIndicator.getValue(index);
+        Num rngfilt;
 
-		if (x.isGreaterThan(prevValue)) {
-			if (x.minus(r).isLessThan(prevValue)) {
-				rngfilt = prevValue;
-			} else {
-				rngfilt = x.minus(r);
-			}
-		} else {
-			if (x.plus(r).isGreaterThan(prevValue)) {
-				rngfilt = prevValue;
-			} else {
-				rngfilt = x.plus(r);
-			}
-		}
+        if (x.isGreaterThan(prevValue)) {
+            if (x.minus(r).isLessThan(prevValue)) {
+                rngfilt = prevValue;
+            } else {
+                rngfilt = x.minus(r);
+            }
+        } else {
+            if (x.plus(r).isGreaterThan(prevValue)) {
+                rngfilt = prevValue;
+            } else {
+                rngfilt = x.plus(r);
+            }
+        }
 
-		return rngfilt;
-	}
+        return rngfilt;
+    }
 
-	@Override
-	public int getUnstableBars() {
-		return smoothRangeIndicator.getUnstableBars();
-	}
+    @Override public int getCountOfUnstableBars() {
+        return smoothRangeIndicator.getCountOfUnstableBars();
+    }
 }

@@ -12,27 +12,25 @@ import org.ta4j.core.num.Num;
  * <a href="https://www.tradingview.com/script/d9IjcYyS-Waddah-Attar-Explosion-V2-SHK/">TradingView</a>
  */
 public class WAEDeadZoneIndicator extends AbstractIndicator<Num> {
-	private final Indicator<Num> deadZone;
-	private final int barCount;
+    private final Indicator<Num> deadZone;
+    private final int barCount;
 
-	public WAEDeadZoneIndicator(BarSeries series) {
-		this(series, 100, 3.7);
-	}
+    public WAEDeadZoneIndicator(BarSeries series) {
+        this(series, 100, 3.7);
+    }
 
-	public WAEDeadZoneIndicator(BarSeries series, int barCount, double multiplier) {
-		super(series);
+    public WAEDeadZoneIndicator(BarSeries series, int barCount, double multiplier) {
+        super(series);
 
-		this.deadZone = TransformIndicator.multiply(new ATRIndicatorPlus(series, barCount), multiplier);
-		this.barCount = barCount;
-	}
+        this.deadZone = TransformIndicator.multiply(new ATRIndicatorPlus(series, barCount), multiplier);
+        this.barCount = barCount;
+    }
 
-	@Override
-	public Num getValue(int index) {
-		return deadZone.getValue(index);
-	}
+    @Override public Num getValue(int index) {
+        return deadZone.getValue(index);
+    }
 
-	@Override
-	public int getUnstableBars() {
-		return barCount;
-	}
+    @Override public int getCountOfUnstableBars() {
+        return barCount;
+    }
 }

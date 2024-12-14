@@ -3,6 +3,7 @@ package org.ta4j.core.indicators;
 import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.Indicator;
+import org.ta4j.core.indicators.averages.SMAIndicator;
 import org.ta4j.core.indicators.helpers.CombineIndicator;
 import org.ta4j.core.indicators.helpers.HighPriceIndicator;
 import org.ta4j.core.indicators.helpers.HighestValueIndicator;
@@ -28,8 +29,8 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
         return fantailVMAIndicator.getValue(index);
     }
 
-    @Override public int getUnstableBars() {
-        return fantailVMAIndicator.getUnstableBars();
+    @Override public int getCountOfUnstableBars() {
+        return fantailVMAIndicator.getCountOfUnstableBars();
     }
 
     private static class VarMAIndicator extends CachedIndicator<Num> {
@@ -76,7 +77,7 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
                     constVal.multipliedBy(closePrice)).dividedBy(getBarSeries().numFactory().numOf(2));
         }
 
-        @Override public int getUnstableBars() {
+        @Override public int getCountOfUnstableBars() {
             return 1;
         }
     }
@@ -105,7 +106,7 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
                     weighting.plus(getBarSeries().numFactory().one()));
         }
 
-        @Override public int getUnstableBars() {
+        @Override public int getCountOfUnstableBars() {
             return 1;
         }
     }
@@ -134,7 +135,7 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
                     weighting.plus(getBarSeries().numFactory().one()));
         }
 
-        @Override public int getUnstableBars() {
+        @Override public int getCountOfUnstableBars() {
             return 1;
         }
     }
@@ -162,7 +163,7 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
                     weighting.plus(getBarSeries().numFactory().one()));
         }
 
-        @Override public int getUnstableBars() {
+        @Override public int getCountOfUnstableBars() {
             return 1;
         }
     }
@@ -200,7 +201,7 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
                     weighting.plus(getBarSeries().numFactory().one()));
         }
 
-        @Override public int getUnstableBars() {
+        @Override public int getCountOfUnstableBars() {
             return 1;
         }
     }

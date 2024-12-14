@@ -1,6 +1,7 @@
 package org.ta4j.core.indicators;
 
 import org.ta4j.core.Indicator;
+import org.ta4j.core.indicators.averages.SMAIndicator;
 import org.ta4j.core.indicators.helpers.TransformIndicator;
 import org.ta4j.core.num.Num;
 
@@ -9,25 +10,23 @@ import org.ta4j.core.num.Num;
  * <a href="https://www.tradingview.com/script/h5kMWewu-Trendilo-OPEN-SOURCE/">TradingView</a>
  */
 public class TrendiloBandIndicator extends AbstractIndicator<Num> {
-	private final Indicator<Num> rms;
-	private final int barCount;
+    private final Indicator<Num> rms;
+    private final int barCount;
 
-	public TrendiloBandIndicator(TrendiloIndicator trendiloIndicator, double multiplier, int barCount) {
-		super(trendiloIndicator.getBarSeries());
+    public TrendiloBandIndicator(TrendiloIndicator trendiloIndicator, double multiplier, int barCount) {
+        super(trendiloIndicator.getBarSeries());
 
-		TransformIndicator avpchPow = TransformIndicator.pow(trendiloIndicator, 2);
-		SMAIndicator avpchPowSma = new SMAIndicator(avpchPow, barCount);
-		this.rms = TransformIndicator.multiply(TransformIndicator.sqrt(avpchPowSma), multiplier);
-		this.barCount = barCount;
-	}
+        TransformIndicator avpchPow = TransformIndicator.pow(trendiloIndicator, 2);
+        SMAIndicator avpchPowSma = new SMAIndicator(avpchPow, barCount);
+        this.rms = TransformIndicator.multiply(TransformIndicator.sqrt(avpchPowSma), multiplier);
+        this.barCount = barCount;
+    }
 
-	@Override
-	public Num getValue(int index) {
-		return rms.getValue(index);
-	}
+    @Override public Num getValue(int index) {
+        return rms.getValue(index);
+    }
 
-	@Override
-	public int getUnstableBars() {
-		return barCount;
-	}
+    @Override public int getCountOfUnstableBars() {
+        return barCount;
+    }
 }

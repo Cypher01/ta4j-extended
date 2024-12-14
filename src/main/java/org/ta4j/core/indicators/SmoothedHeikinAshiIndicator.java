@@ -11,37 +11,36 @@ import org.ta4j.core.BaseBarSeriesBuilder;
  * <a href="https://de.tradingview.com/script/ROokknI2-Smoothed-Heiken-Ashi-Candles-v1/">TradingView</a>
  */
 public class SmoothedHeikinAshiIndicator extends AbstractIndicator<Bar> {
-	private final SmoothedBarIndicator smoothedHeikinAshiIndicator;
-	private final int barCount;
+    private final SmoothedBarIndicator smoothedHeikinAshiIndicator;
+    private final int barCount;
 
-	public SmoothedHeikinAshiIndicator(BarSeries series, int barCount) {
-		super(series);
+    public SmoothedHeikinAshiIndicator(BarSeries series, int barCount) {
+        super(series);
 
-		this.smoothedHeikinAshiIndicator = new SmoothedBarIndicator(new HeikinAshiIndicator(new SmoothedBarIndicator(series, barCount)), barCount);
-		this.barCount = barCount;
-	}
+        this.smoothedHeikinAshiIndicator = new SmoothedBarIndicator(
+                new HeikinAshiIndicator(new SmoothedBarIndicator(series, barCount)), barCount);
+        this.barCount = barCount;
+    }
 
-	public BarSeries getHeikinAshiBarSeries() {
-		return getHeikinAshiBarSeries(getBarSeries().getName() + "_SmoothedHeikinAshi");
-	}
+    public BarSeries getHeikinAshiBarSeries() {
+        return getHeikinAshiBarSeries(getBarSeries().getName() + "_SmoothedHeikinAshi");
+    }
 
-	public BarSeries getHeikinAshiBarSeries(String name) {
-		List<Bar> bars = new ArrayList<>();
+    public BarSeries getHeikinAshiBarSeries(String name) {
+        List<Bar> bars = new ArrayList<>();
 
-		for (int i = getBarSeries().getBeginIndex(); i <= getBarSeries().getEndIndex(); i++) {
-			bars.add(getValue(i));
-		}
+        for (int i = getBarSeries().getBeginIndex(); i <= getBarSeries().getEndIndex(); i++) {
+            bars.add(getValue(i));
+        }
 
-    return new BaseBarSeriesBuilder().withName(name).withBars(bars).build();
-	}
+        return new BaseBarSeriesBuilder().withName(name).withBars(bars).build();
+    }
 
-	@Override
-	public Bar getValue(int index) {
-		return smoothedHeikinAshiIndicator.getValue(index);
-	}
+    @Override public Bar getValue(int index) {
+        return smoothedHeikinAshiIndicator.getValue(index);
+    }
 
-	@Override
-	public int getUnstableBars() {
-		return barCount;
-	}
+    @Override public int getCountOfUnstableBars() {
+        return barCount;
+    }
 }

@@ -31,11 +31,11 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 	}
 
 	@Override
-	public int getUnstableBars() {
-		return 0;
+	public int getCountOfUnstableBars() {
+		return cuIndicator.getCountOfUnstableBars();
 	}
 
-	private static class L0Indicator extends CachedIndicator<Num> {
+	private static final class L0Indicator extends CachedIndicator<Num> {
 		private final Indicator<Num> indicator;
 		private final Num alpha;
 		private final Num gamma;
@@ -58,12 +58,12 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 		}
 
 		@Override
-		public int getUnstableBars() {
-			return 0;
+		public int getCountOfUnstableBars() {
+			return indicator.getCountOfUnstableBars();
 		}
 	}
 
-	private static class L123Indicator extends CachedIndicator<Num> {
+	private static final class L123Indicator extends CachedIndicator<Num> {
 		private final Indicator<Num> indicator;
 		private final Num gamma;
 		private final Num negGamma;
@@ -86,12 +86,12 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 		}
 
 		@Override
-		public int getUnstableBars() {
-			return 0;
+		public int getCountOfUnstableBars() {
+			return indicator.getCountOfUnstableBars();
 		}
 	}
 
-	private static class CUIndicator extends CachedIndicator<Num> {
+	private static final class CUIndicator extends CachedIndicator<Num> {
 		private final Indicator<Num> l0Indicator;
 		private final Indicator<Num> l1Indicator;
 		private final Indicator<Num> l2Indicator;
@@ -116,12 +116,12 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 		}
 
 		@Override
-		public int getUnstableBars() {
-			return 0;
+		public int getCountOfUnstableBars() {
+			return l0Indicator.getCountOfUnstableBars();
 		}
 	}
 
-	private static class CDIndicator extends CachedIndicator<Num> {
+	private static final class CDIndicator extends CachedIndicator<Num> {
 		private final Indicator<Num> l0Indicator;
 		private final Indicator<Num> l1Indicator;
 		private final Indicator<Num> l2Indicator;
@@ -146,8 +146,8 @@ public class LaguerreRSIIndicator extends CachedIndicator<Num> {
 		}
 
 		@Override
-		public int getUnstableBars() {
-			return 0;
+		public int getCountOfUnstableBars() {
+			return l0Indicator.getCountOfUnstableBars();
 		}
 	}
 }
