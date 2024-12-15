@@ -1,84 +1,52 @@
 package org.ta4j.core.indicators;
 
 import org.ta4j.core.Indicator;
-import org.ta4j.core.indicators.averages.ZLEMAIndicator;
+import org.ta4j.core.indicators.averages.EMAIndicator;
 import org.ta4j.core.indicators.numeric.NumericIndicator;
 import org.ta4j.core.num.Num;
 
 /**
- * Based on the MACD indicator, the ZeroLagMACD indicator is a trend indicator that is used to identify the direction of
- * the market. It is calculated by subtracting the long-term ZLEMA from the short-term ZLEMA.
+ * Zero Lag MACD (ZLMACD) indicator by @yassotreyo
+ * <a href="https://www.tradingview.com/v/GcbLcwG7/">TradingView</a>
  */
 public class ZeroLagMACDIndicator extends CachedIndicator<Num> {
 
-    private final ZLEMAIndicator shortTermZLEma;
-    private final ZLEMAIndicator longTermZLEma;
+    private final NumericIndicator zeroLagMACD;
+    private final NumericIndicator signalLine;
 
-    /**
-     * Constructor with:
-     *
-     * <ul>
-     * <li>{@code shortBarCount} = 12
-     * <li>{@code longBarCount} = 26
-     * </ul>
-     *
-     * @param indicator the {@link Indicator}
-     */
-    public ZeroLagMACDIndicator(Indicator<Num> indicator) {
-        this(indicator, 12, 26);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param indicator     the {@link Indicator}
-     * @param shortBarCount the short time frame (normally 12)
-     * @param longBarCount  the long time frame (normally 26)
-     */
-    public ZeroLagMACDIndicator(Indicator<Num> indicator, int shortBarCount, int longBarCount) {
+    public ZeroLagMACDIndicator(Indicator<Num> indicator, int fastLength, int slowLength, int signalLength) {
         super(indicator);
-        if (shortBarCount > longBarCount) {
-            throw new IllegalArgumentException("Long term period count must be greater than short term period count");
-        }
-        this.shortTermZLEma = new ZLEMAIndicator(indicator, shortBarCount);
-        this.longTermZLEma = new ZLEMAIndicator(indicator, longBarCount);
-    }
 
-    /**
-     * @return the Short term EMA indicator
-     */
-    public ZLEMAIndicator getShortTermZLEma() {
-        return shortTermZLEma;
-    }
+        // FAST LINE
+        EMAIndicator ema1 = new EMAIndicator(indicator, fastLength);
+        EMAIndicator ema2 = new EMAIndicator(ema1, fastLength);
+        NumericIndicator demaFast = NumericIndicator.of(ema1).multipliedBy(2).minus(ema2);
 
-    /**
-     * @return the Long term EMA indicator
-     */
-    public ZLEMAIndicator getLongTermZLEma() {
-        return longTermZLEma;
-    }
+        // SLOW LINE
+        EMAIndicator emas1 = new EMAIndicator(indicator, slowLength);
+        EMAIndicator emas2 = new EMAIndicator(emas1, slowLength);
+        NumericIndicator demaSlow = NumericIndicator.of(emas1).multipliedBy(2).minus(emas2);
 
-    /**
-     * @param barCount of signal line
-     *
-     * @return signal line for this MACD indicator
-     */
-    public ZLEMAIndicator getSignalLine(int barCount) {
-        return new ZLEMAIndicator(this, barCount);
-    }
+        // MACD LINE
+        zeroLagMACD = demaFast.minus(demaSlow);
 
-    /**
-     * @param barCount of signal line
-     *
-     * @return histogram of this MACD indicator
-     */
-    public NumericIndicator getHistogram(int barCount) {
-        return NumericIndicator.of(this).minus(getSignalLine(barCount));
+        // SIGNAL LINE
+        EMAIndicator emasig1 = new EMAIndicator(zeroLagMACD, signalLength);
+        EMAIndicator emasig2 = new EMAIndicator(emasig1, signalLength);
+        signalLine = NumericIndicator.of(emasig1).multipliedBy(2).minus(emasig2);
     }
 
     @Override
     protected Num calculate(int index) {
-        return shortTermZLEma.getValue(index).minus(longTermZLEma.getValue(index));
+        return zeroLagMACD.getValue(index);
+    }
+
+    public NumericIndicator getSignalLine() {
+        return signalLine;
+    }
+
+    public NumericIndicator getHistogram() {
+        return zeroLagMACD.minus(signalLine);
     }
 
     @Override
