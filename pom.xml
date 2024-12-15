@@ -34,6 +34,8 @@
 		<maven.compiler.target>21</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <junit-jupiter.version>5.11.3</junit-jupiter.version>
 	</properties>
 
 	<dependencies>
@@ -42,6 +44,20 @@
 			<artifactId>ta4j-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
 	</dependencies>
 
 	<build>
