@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
-import org.ta4j.core.bars.BaseBarBuilder;
 import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.Indicator;
+import org.ta4j.core.bars.TimeBarBuilder;
 import org.ta4j.core.indicators.averages.EMAIndicator;
 import org.ta4j.core.indicators.helpers.BarValueIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
@@ -60,16 +60,18 @@ public class SmoothedBarIndicator extends CachedIndicator<Bar> {
         return new BaseBarSeriesBuilder().withName(name).withBars(bars).build();
     }
 
-    @Override protected Bar calculate(int index) {
+    @Override
+    protected Bar calculate(int index) {
         Bar bar = getBarSeries().getBar(index);
 
-        return new BaseBarBuilder().timePeriod(bar.getTimePeriod()).endTime(bar.getEndTime()).openPrice(
+        return new TimeBarBuilder().timePeriod(bar.getTimePeriod()).endTime(bar.getEndTime()).openPrice(
                 smoothedOpen.getValue(index)).highPrice(smoothedHigh.getValue(index)).lowPrice(
                 smoothedLow.getValue(index)).closePrice(smoothedClose.getValue(index)).volume(bar.getVolume()).amount(
                 bar.getAmount()).trades(bar.getTrades()).build();
     }
 
-    @Override public int getCountOfUnstableBars() {
+    @Override
+    public int getCountOfUnstableBars() {
         return barCount;
     }
 }

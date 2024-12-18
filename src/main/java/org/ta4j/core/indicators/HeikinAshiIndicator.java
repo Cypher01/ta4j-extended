@@ -6,7 +6,7 @@ import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.Indicator;
-import org.ta4j.core.bars.BaseBarBuilder;
+import org.ta4j.core.bars.TimeBarBuilder;
 import org.ta4j.core.num.Num;
 
 /**
@@ -17,11 +17,13 @@ public class HeikinAshiIndicator extends RecursiveCachedIndicator<Bar> {
 
     public HeikinAshiIndicator(BarSeries series) {
         this(new AbstractIndicator<>(series) {
-            @Override public Bar getValue(int index) {
+            @Override
+            public Bar getValue(int index) {
                 return series.getBar(index);
             }
 
-            @Override public int getCountOfUnstableBars() {
+            @Override
+            public int getCountOfUnstableBars() {
                 return 0;
             }
         });
@@ -47,7 +49,8 @@ public class HeikinAshiIndicator extends RecursiveCachedIndicator<Bar> {
         return new BaseBarSeriesBuilder().withName(name).withBars(bars).build();
     }
 
-    @Override protected Bar calculate(int index) {
+    @Override
+    protected Bar calculate(int index) {
         if (index == 0) {
             return indicator.getValue(index);
         }
@@ -67,7 +70,7 @@ public class HeikinAshiIndicator extends RecursiveCachedIndicator<Bar> {
         Num haHighPrice = highPrice.max(haClosePrice).max(haOpenPrice);
         Num haLowPrice = lowPrice.min(haClosePrice).min(haOpenPrice);
 
-        return new BaseBarBuilder().timePeriod(bar.getTimePeriod())
+        return new TimeBarBuilder().timePeriod(bar.getTimePeriod())
                 .endTime(bar.getEndTime())
                 .openPrice(haOpenPrice)
                 .highPrice(haHighPrice)
@@ -79,7 +82,8 @@ public class HeikinAshiIndicator extends RecursiveCachedIndicator<Bar> {
                 .build();
     }
 
-    @Override public int getCountOfUnstableBars() {
+    @Override
+    public int getCountOfUnstableBars() {
         return 0;
     }
 }
