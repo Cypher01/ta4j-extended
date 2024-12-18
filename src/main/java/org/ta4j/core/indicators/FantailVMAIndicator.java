@@ -25,11 +25,13 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
         this.fantailVMAIndicator = new SMAIndicator(new VarMAIndicator(series, adxLength, weighting), barCount);
     }
 
-    @Override public Num getValue(int index) {
+    @Override
+    public Num getValue(int index) {
         return fantailVMAIndicator.getValue(index);
     }
 
-    @Override public int getCountOfUnstableBars() {
+    @Override
+    public int getCountOfUnstableBars() {
         return fantailVMAIndicator.getCountOfUnstableBars();
     }
 
@@ -63,7 +65,8 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
             this.diff = CombineIndicator.minus(adxHigh, adxLow);
         }
 
-        @Override protected Num calculate(int index) {
+        @Override
+        protected Num calculate(int index) {
             Num closePrice = getBarSeries().getBar(index).getClosePrice();
 
             if (index == 0) {
@@ -77,7 +80,8 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
                     constVal.multipliedBy(closePrice)).dividedBy(getBarSeries().numFactory().numOf(2));
         }
 
-        @Override public int getCountOfUnstableBars() {
+        @Override
+        public int getCountOfUnstableBars() {
             return 1;
         }
     }
@@ -94,7 +98,8 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
             this.weighting = getBarSeries().numFactory().numOf(weighting);
         }
 
-        @Override protected Num calculate(int index) {
+        @Override
+        protected Num calculate(int index) {
             if (index == 0) {
                 return getBarSeries().numFactory().zero();
             }
@@ -106,7 +111,8 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
                     weighting.plus(getBarSeries().numFactory().one()));
         }
 
-        @Override public int getCountOfUnstableBars() {
+        @Override
+        public int getCountOfUnstableBars() {
             return 1;
         }
     }
@@ -123,7 +129,8 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
             this.weighting = getBarSeries().numFactory().numOf(weighting);
         }
 
-        @Override protected Num calculate(int index) {
+        @Override
+        protected Num calculate(int index) {
             if (index == 0) {
                 return getBarSeries().numFactory().zero();
             }
@@ -135,7 +142,8 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
                     weighting.plus(getBarSeries().numFactory().one()));
         }
 
-        @Override public int getCountOfUnstableBars() {
+        @Override
+        public int getCountOfUnstableBars() {
             return 1;
         }
     }
@@ -148,7 +156,8 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
             this.weighting = getBarSeries().numFactory().numOf(weighting);
         }
 
-        @Override protected Num calculate(int index) {
+        @Override
+        protected Num calculate(int index) {
             Bar bar = getBarSeries().getBar(index);
             Num highPrice = bar.getHighPrice();
             Num lowPrice = bar.getLowPrice();
@@ -163,7 +172,8 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
                     weighting.plus(getBarSeries().numFactory().one()));
         }
 
-        @Override public int getCountOfUnstableBars() {
+        @Override
+        public int getCountOfUnstableBars() {
             return 1;
         }
     }
@@ -182,7 +192,8 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
             this.weighting = getBarSeries().numFactory().numOf(weighting);
         }
 
-        @Override protected Num calculate(int index) {
+        @Override
+        protected Num calculate(int index) {
             if (index == 0) {
                 return getBarSeries().numFactory().zero();
             }
@@ -201,7 +212,8 @@ public class FantailVMAIndicator extends AbstractIndicator<Num> {
                     weighting.plus(getBarSeries().numFactory().one()));
         }
 
-        @Override public int getCountOfUnstableBars() {
+        @Override
+        public int getCountOfUnstableBars() {
             return 1;
         }
     }
