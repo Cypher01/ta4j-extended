@@ -49,11 +49,13 @@ public class VolumeFlowIndicator extends AbstractIndicator<Num> {
         this.barCount = barCount;
     }
 
-    @Override public Num getValue(int index) {
+    @Override
+    public Num getValue(int index) {
         return volumeFlowIndicator.getValue(index);
     }
 
-    @Override public int getCountOfUnstableBars() {
+    @Override
+    public int getCountOfUnstableBars() {
         return volumeFlowIndicator.getCountOfUnstableBars();
     }
 
@@ -74,7 +76,8 @@ public class VolumeFlowIndicator extends AbstractIndicator<Num> {
             this.vcNeg = TransformIndicator.multiply(vc, -1);
         }
 
-        @Override protected Num calculate(int index) {
+        @Override
+        protected Num calculate(int index) {
             if (mf.getValue(index).isGreaterThan(cutoff.getValue(index))) {
                 return vc.getValue(index);
             } else if (mf.getValue(index).isLessThan(cutoffNeg.getValue(index))) {
@@ -84,7 +87,8 @@ public class VolumeFlowIndicator extends AbstractIndicator<Num> {
             }
         }
 
-        @Override public int getCountOfUnstableBars() {
+        @Override
+        public int getCountOfUnstableBars() {
             // get max from all indicators
             return Math.max(Math.max(mf.getCountOfUnstableBars(), cutoff.getCountOfUnstableBars()),
                     vc.getCountOfUnstableBars());
