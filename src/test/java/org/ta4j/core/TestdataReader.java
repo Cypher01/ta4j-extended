@@ -30,12 +30,12 @@ public class TestdataReader {
                     continue;
                 }
                 String[] values = line.split(",");
-                Instant instant = Instant.ofEpochMilli(Long.parseLong(values[0]));
-                double open = Double.parseDouble(values[2]);
-                double high = Double.parseDouble(values[3]);
-                double low = Double.parseDouble(values[4]);
-                double close = Double.parseDouble(values[5]);
-                double volume = Double.parseDouble(values[6]);
+                Instant instant = Instant.parse(values[1]);
+                double open = Double.parseDouble(values[3]);
+                double high = Double.parseDouble(values[4]);
+                double low = Double.parseDouble(values[5]);
+                double close = Double.parseDouble(values[6]);
+                double volume = Double.parseDouble(values[7]);
 
                 series.addBar(new BaseBar(duration, instant, numFactory.numOf(open), numFactory.numOf(high),
                         numFactory.numOf(low), numFactory.numOf(close), numFactory.numOf(volume), numFactory.zero(),

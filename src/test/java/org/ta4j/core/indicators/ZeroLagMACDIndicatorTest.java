@@ -28,7 +28,7 @@ public class ZeroLagMACDIndicatorTest extends AbstractIndicatorTest<Indicator<Nu
     }
 
     @Test
-    public void macdUsingPeriod5And10() {
+    public void calculationTest() {
         var indicator = new ZeroLagMACDIndicator(new ClosePriceIndicator(data), 12, 26, 9);
         int i = data.getEndIndex();
 

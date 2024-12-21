@@ -26,7 +26,7 @@ public class FantailVMAIndicatorTest extends AbstractIndicatorTest<Indicator<Num
     }
 
     @Test
-    public void macdUsingPeriod5And10() {
+    public void test() {
         var indicator = new FantailVMAIndicator(data, 2, 10, 6);
 
         assertNumEquals(100575.13812438415, indicator.getValue(data.getBarCount() - 3));
