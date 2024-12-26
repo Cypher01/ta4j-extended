@@ -16,7 +16,7 @@ public class TestdataReader {
         this.numFactory = numFactory;
     }
 
-    public static BarSeries readCsv(String filename, Duration duration) throws IOException {
+    public BarSeries readCsv(String filename, Duration duration) throws IOException {
         BarSeries series = new BaseBarSeriesBuilder().withName("test").withNumFactory(numFactory).build();
         File file = new File("src/test/resources/" + filename);
 
@@ -25,12 +25,12 @@ public class TestdataReader {
 
             int i = 0;
             while ((line = br.readLine()) != null) {
+                // skip header
                 if (i == 0) {
                     i++;
                     continue;
                 }
                 String[] values = line.split(",");
-                Instant startTime = Instant.parse(values[1]);
                 Instant endTime = Instant.parse(values[2]);
                 double open = Double.parseDouble(values[4]);
                 double high = Double.parseDouble(values[5]);
