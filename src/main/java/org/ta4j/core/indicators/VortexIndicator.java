@@ -38,7 +38,7 @@ public class VortexIndicator extends AbstractIndicator<Num> {
     }
 
     /**
-     * Constructor. Original TradingView code:
+     * Constructor.
      *
      * @param indicator the indicator
      * @param barCount  the bar count
