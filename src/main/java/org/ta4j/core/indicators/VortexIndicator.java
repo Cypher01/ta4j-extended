@@ -28,10 +28,9 @@ plot(VIM, title="VI -", color=#E91E63)
  */
 public class VortexIndicator extends AbstractIndicator<Num> {
     private final int barCount;
-    private final LowPriceIndicator lowPriceIndicator;
-    private final HighPriceIndicator highPriceIndicator;
-    Indicator<Num> highMinusPrevLow;
-    Indicator<Num> lowMinusPrevHigh;
+
+    private final Indicator<Num> highMinusPrevLow;
+    private final Indicator<Num> lowMinusPrevHigh;
     private final ATRIndicator atrIndicator;
 
     public VortexIndicator(BarSeries series, int barCount) {
@@ -49,8 +48,8 @@ public class VortexIndicator extends AbstractIndicator<Num> {
 
         this.barCount = barCount;
 
-        lowPriceIndicator = new LowPriceIndicator(getBarSeries());
-        highPriceIndicator = new HighPriceIndicator(getBarSeries());
+        LowPriceIndicator lowPriceIndicator = new LowPriceIndicator(getBarSeries());
+        HighPriceIndicator highPriceIndicator = new HighPriceIndicator(getBarSeries());
         highMinusPrevLow = CombineIndicator.minus(highPriceIndicator, new PreviousValueIndicator(lowPriceIndicator, 1));
         lowMinusPrevHigh = CombineIndicator.minus(lowPriceIndicator, new PreviousValueIndicator(highPriceIndicator, 1));
         atrIndicator = new ATRIndicator(getBarSeries(), 1);
