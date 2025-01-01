@@ -4,6 +4,7 @@ import org.ta4j.core.BarSeries;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.num.Num;
+import org.ta4j.core.num.NumFactory;
 
 /**
  * Arnaud Legoux moving average (ALMA) indicator, based on PineScript v5 Reference Manual.
@@ -28,17 +29,18 @@ public class ALMAIndicator extends CachedIndicator<Num> {
         this.s = barCount / sigma;
     }
 
-    @Override protected Num calculate(int index) {
-        Num norm = getBarSeries().numFactory().zero();
-        Num sum = getBarSeries().numFactory().zero();
+    @Override
+    protected Num calculate(int index) {
+        final NumFactory numFactory = getBarSeries().numFactory();
+        Num norm = numFactory.zero();
+        Num sum = numFactory.zero();
 
         for (int i = barCount - 1; i >= 0; i--) {
-            int valueIndex = index - barCount + i + 1;
+            final int valueIndex = index - barCount + i + 1;
             if (valueIndex < 0) {
                 break;
             }
-            Num weight = getBarSeries().numFactory().numOf(
-                    Math.exp(-1d * Math.pow(i - m, 2d) / (2d * Math.pow(s, 2d))));
+            final Num weight = numFactory.numOf(Math.exp(-1d * Math.pow(i - m, 2d) / (2d * Math.pow(s, 2d))));
             norm = norm.plus(weight);
             sum = sum.plus(indicator.getValue(valueIndex).multipliedBy(weight));
         }
@@ -46,7 +48,8 @@ public class ALMAIndicator extends CachedIndicator<Num> {
         return sum.dividedBy(norm);
     }
 
-    @Override public int getCountOfUnstableBars() {
+    @Override
+    public int getCountOfUnstableBars() {
         return barCount;
     }
 }
