@@ -23,7 +23,7 @@ public class TrendiloIndicator extends AbstractIndicator<Num> {
         super(indicator.getBarSeries());
 
         CombineIndicator ch = CombineIndicator.minus(indicator, new PreviousValueIndicator(indicator, smoothing));
-        TransformIndicator pch = TransformIndicator.divide(CombineIndicator.divide(ch, indicator), 100d);
+        TransformIndicator pch = TransformIndicator.multiply(CombineIndicator.divide(ch, indicator), 100d);
         this.avpch = new ALMAIndicator(pch, barCount, offset, sigma);
     }
 
