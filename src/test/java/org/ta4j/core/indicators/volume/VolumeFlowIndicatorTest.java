@@ -30,11 +30,11 @@ public class VolumeFlowIndicatorTest extends AbstractIndicatorTest<Indicator<Num
     public void calculationTest() {
         // we will get a ClassCastException here, so we need to catch it and ignore it
         try {
-            var indicator = new VolumeFlowIndicator(data, 130, 0, 2.5);
+            var indicator = new VolumeFlowIndicator(data, 130, 0.2, 2.5);
 
-            assertNumEquals(18.918459254426526, indicator.getValue(data.getBarCount() - 3));
-            assertNumEquals(18.335717097597144, indicator.getValue(data.getBarCount() - 2));
-            assertNumEquals(18.075302381112095, indicator.getValue(data.getEndIndex()));
+            assertNumEquals(18.90587653085297, indicator.getValue(data.getBarCount() - 3));
+            assertNumEquals(18.337815505763764, indicator.getValue(data.getBarCount() - 2));
+            assertNumEquals(18.131546626210387, indicator.getValue(data.getEndIndex()));
         } catch (ClassCastException e) {
             // Ignore
         }

@@ -7,6 +7,7 @@ import org.ta4j.core.indicators.CachedIndicator;
 import org.ta4j.core.indicators.averages.SMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.CombineIndicator;
+import org.ta4j.core.indicators.helpers.NzIndicator;
 import org.ta4j.core.indicators.helpers.PreviousValueIndicator;
 import org.ta4j.core.indicators.helpers.RunningTotalIndicator;
 import org.ta4j.core.indicators.helpers.TransformIndicator;
@@ -24,24 +25,24 @@ public class VolumeFlowIndicator extends AbstractIndicator<Num> {
     private final Indicator<Num> volumeFlowIndicator;
     private final int barCount;
 
-    public VolumeFlowIndicator(BarSeries series, int barCount, double coeff, double vcoeff) {
-        this(new TypicalPriceIndicator(series), barCount, coeff, vcoeff);
+    public VolumeFlowIndicator(BarSeries series, int barCount, double coef, double vcoef) {
+        this(new TypicalPriceIndicator(series), barCount, coef, vcoef);
     }
 
-    public VolumeFlowIndicator(Indicator<Num> indicator, int barCount, double coeff, double vcoeff) {
+    public VolumeFlowIndicator(Indicator<Num> indicator, int barCount, double coef, double vcoef) {
         super(indicator.getBarSeries());
 
         TransformIndicator log = TransformIndicator.log(indicator);
-        PreviousValueIndicator prevLog = new PreviousValueIndicator(log, 1);
+        NzIndicator prevLog = new NzIndicator(new PreviousValueIndicator(log));
         CombineIndicator inter = CombineIndicator.minus(log, prevLog);
         StandardDeviationIndicator vinter = new StandardDeviationIndicator(inter, 30);
         TransformIndicator cutoff = TransformIndicator.multiply(
-                CombineIndicator.multiply(vinter, new ClosePriceIndicator(indicator.getBarSeries())), coeff);
+                CombineIndicator.multiply(vinter, new ClosePriceIndicator(indicator.getBarSeries())), coef);
         VolumeIndicator volumeIndicator = new VolumeIndicator(indicator.getBarSeries());
-        SMAIndicator vave = new SMAIndicator(volumeIndicator, barCount);
-        TransformIndicator vmax = TransformIndicator.multiply(vave, vcoeff);
+        NzIndicator vave = new NzIndicator(new PreviousValueIndicator(new SMAIndicator(volumeIndicator, barCount)));
+        TransformIndicator vmax = TransformIndicator.multiply(vave, vcoef);
         CombineIndicator vc = CombineIndicator.min(volumeIndicator, vmax);
-        PreviousValueIndicator prevIndicator = new PreviousValueIndicator(indicator, 1);
+        NzIndicator prevIndicator = new NzIndicator(new PreviousValueIndicator(indicator));
         CombineIndicator mf = CombineIndicator.minus(indicator, prevIndicator);
         VPCIndicator vcp = new VPCIndicator(mf, cutoff, vc);
         RunningTotalIndicator sum = new RunningTotalIndicator(vcp, barCount);
