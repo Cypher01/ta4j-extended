@@ -46,7 +46,6 @@ public class ATRIndicatorPlus extends AbstractIndicator<Num> {
         default:
             throw new IllegalArgumentException("Input " + input + " not supported");
         }
-        ;
     }
 
     @Override public Num getValue(int index) {
