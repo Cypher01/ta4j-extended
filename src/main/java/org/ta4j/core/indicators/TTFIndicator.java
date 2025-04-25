@@ -4,7 +4,9 @@ import org.ta4j.core.BarSeries;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.CombineIndicator;
+import org.ta4j.core.indicators.helpers.HighPriceIndicator;
 import org.ta4j.core.indicators.helpers.HighestValueIndicator;
+import org.ta4j.core.indicators.helpers.LowPriceIndicator;
 import org.ta4j.core.indicators.helpers.LowestValueIndicator;
 import org.ta4j.core.indicators.helpers.NzIndicator;
 import org.ta4j.core.indicators.helpers.PreviousValueIndicator;
@@ -26,8 +28,8 @@ public class TTFIndicator extends AbstractIndicator<Num> {
 	public TTFIndicator(Indicator<Num> indicator, int barCount) {
 		super(indicator.getBarSeries());
 
-		Indicator<Num> highestValue = new HighestValueIndicator(indicator, barCount);
-		Indicator<Num> lowestValue = new LowestValueIndicator(indicator, barCount);
+		Indicator<Num> highestValue = new HighestValueIndicator(new HighPriceIndicator(indicator.getBarSeries()), barCount);
+		Indicator<Num> lowestValue = new LowestValueIndicator(new LowPriceIndicator(indicator.getBarSeries()), barCount);
 		Indicator<Num> previousHighestValue = new NzIndicator(new PreviousValueIndicator(highestValue, barCount));
 		Indicator<Num> previousLowestValue = new NzIndicator(new PreviousValueIndicator(lowestValue, barCount));
 		Indicator<Num> buyPower = CombineIndicator.minus(highestValue, previousLowestValue);
