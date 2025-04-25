@@ -4,7 +4,9 @@ import org.ta4j.core.BarSeries;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.CombineIndicator;
+import org.ta4j.core.indicators.helpers.HighPriceIndicator;
 import org.ta4j.core.indicators.helpers.HighestValueIndicator;
+import org.ta4j.core.indicators.helpers.LowPriceIndicator;
 import org.ta4j.core.indicators.helpers.LowestValueIndicator;
 import org.ta4j.core.indicators.helpers.NzIndicator;
 import org.ta4j.core.indicators.helpers.PreviousValueIndicator;
@@ -13,9 +15,10 @@ import org.ta4j.core.num.Num;
 
 /**
  * Trend Trigger Factor (TTF) indicator by everget. <a
- * href="https://www.tradingview.com/script/WA9Z4CV2-Trend-Trigger-Factor/">TradingView</a>
+ * https://www.tradingview.com/script/WA9Z4CV2-Trend-Trigger-Factor/">TradingView</a>
  */
 public class TTFIndicator extends AbstractIndicator<Num> {
+    private final Indicator<Num> indicator;
     private final Indicator<Num> ttfIndicator;
     private final int barCount;
 
@@ -25,9 +28,12 @@ public class TTFIndicator extends AbstractIndicator<Num> {
 
     public TTFIndicator(Indicator<Num> indicator, int barCount) {
         super(indicator.getBarSeries());
+        this.indicator = indicator;
 
-        Indicator<Num> highestValue = new HighestValueIndicator(indicator, barCount);
-        Indicator<Num> lowestValue = new LowestValueIndicator(indicator, barCount);
+        Indicator<Num> highestValue = new HighestValueIndicator(new HighPriceIndicator(indicator.getBarSeries()),
+                barCount);
+        Indicator<Num> lowestValue = new LowestValueIndicator(new LowPriceIndicator(indicator.getBarSeries()),
+                barCount);
         Indicator<Num> previousHighestValue = new NzIndicator(new PreviousValueIndicator(highestValue, barCount));
         Indicator<Num> previousLowestValue = new NzIndicator(new PreviousValueIndicator(lowestValue, barCount));
         Indicator<Num> buyPower = CombineIndicator.minus(highestValue, previousLowestValue);

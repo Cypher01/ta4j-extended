@@ -37,15 +37,14 @@ public class RMIIndicator extends CachedIndicator<Num> {
 
     @Override
     protected Num calculate(int index) {
-        Num upValue = up.getValue(index);
-        Num downValue = down.getValue(index);
-
         NumFactory numFactory = getBarSeries().numFactory();
         Num hundred = numFactory.hundred();
 
+        Num downValue = down.getValue(index);
         if (downValue.isZero()) {
             return hundred;
         }
+        Num upValue = up.getValue(index);
         if (upValue.isZero()) {
             return numFactory.zero();
         }
