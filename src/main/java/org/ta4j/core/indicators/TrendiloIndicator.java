@@ -22,16 +22,18 @@ public class TrendiloIndicator extends AbstractIndicator<Num> {
     public TrendiloIndicator(Indicator<Num> indicator, int barCount, int smoothing, double offset, int sigma) {
         super(indicator.getBarSeries());
 
-        CombineIndicator ch = CombineIndicator.minus(indicator, new PreviousValueIndicator(indicator, smoothing));
-        TransformIndicator pch = TransformIndicator.multiply(CombineIndicator.divide(ch, indicator), 100d);
-        this.avpch = new ALMAIndicator(pch, barCount, offset, sigma);
-    }
+		CombineIndicator ch = CombineIndicator.minus(indicator, new PreviousValueIndicator(indicator, smoothing));
+		TransformIndicator pch = TransformIndicator.multiply(CombineIndicator.divide(ch, indicator), 100d);
+		this.avpch = new ALMAIndicator(pch, barCount, offset, sigma);
+	}
 
-    @Override public Num getValue(int index) {
+    @Override
+    public Num getValue(int index) {
         return avpch.getValue(index);
     }
 
-    @Override public int getCountOfUnstableBars() {
+    @Override
+    public int getCountOfUnstableBars() {
         return avpch.getCountOfUnstableBars();
     }
 }

@@ -33,13 +33,14 @@ public class VolumeFlowIndicator extends AbstractIndicator<Num> {
         super(indicator.getBarSeries());
 
         TransformIndicator log = TransformIndicator.log(indicator);
-        NzIndicator prevLog = new NzIndicator(new PreviousValueIndicator(log));
+        NzIndicator prevLog = new NzIndicator(new NzIndicator(new PreviousValueIndicator(log)));
         CombineIndicator inter = CombineIndicator.minus(log, prevLog);
         StandardDeviationIndicator vinter = new StandardDeviationIndicator(inter, 30);
         TransformIndicator cutoff = TransformIndicator.multiply(
                 CombineIndicator.multiply(vinter, new ClosePriceIndicator(indicator.getBarSeries())), coef);
         VolumeIndicator volumeIndicator = new VolumeIndicator(indicator.getBarSeries());
-        NzIndicator vave = new NzIndicator(new PreviousValueIndicator(new SMAIndicator(volumeIndicator, barCount)));
+        NzIndicator vave = new NzIndicator(new PreviousValueIndicator(
+                new NzIndicator(new PreviousValueIndicator(new SMAIndicator(volumeIndicator, barCount)))));
         TransformIndicator vmax = TransformIndicator.multiply(vave, vcoef);
         CombineIndicator vc = CombineIndicator.min(volumeIndicator, vmax);
         NzIndicator prevIndicator = new NzIndicator(new PreviousValueIndicator(indicator));
