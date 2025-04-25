@@ -29,6 +29,8 @@ public class RMIIndicatorTest extends AbstractIndicatorTest<Indicator<Num>, Num>
     public void test() {
         var indicator = new RMIIndicator(data, 14, 3);
 
+        // TV: 19.3
+        assertNumEquals(19.264814213181978, indicator.getValue(data.getEndIndex() - 163));
         // TV: 77.4
         assertNumEquals(77.41018506225824, indicator.getValue(data.getEndIndex() - 2));
         // TV: 79.9

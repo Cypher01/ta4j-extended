@@ -18,9 +18,8 @@ import org.ta4j.core.num.Num;
  * https://www.tradingview.com/script/WA9Z4CV2-Trend-Trigger-Factor/">TradingView</a>
  */
 public class TTFIndicator extends AbstractIndicator<Num> {
-    private final Indicator<Num> indicator;
-    private final Indicator<Num> ttfIndicator;
-    private final int barCount;
+	private final Indicator<Num> ttfIndicator;
+	private final int barCount;
 
     public TTFIndicator(BarSeries series, int barCount) {
         this(new ClosePriceIndicator(series), barCount);
@@ -28,7 +27,6 @@ public class TTFIndicator extends AbstractIndicator<Num> {
 
     public TTFIndicator(Indicator<Num> indicator, int barCount) {
         super(indicator.getBarSeries());
-        this.indicator = indicator;
 
         Indicator<Num> highestValue = new HighestValueIndicator(new HighPriceIndicator(indicator.getBarSeries()),
                 barCount);
