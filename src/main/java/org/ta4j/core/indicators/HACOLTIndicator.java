@@ -2,6 +2,8 @@ package org.ta4j.core.indicators;
 
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.Indicator;
+import org.ta4j.core.indicators.averages.EMAIndicator;
+import org.ta4j.core.indicators.averages.TripleEMAIndicator;
 import org.ta4j.core.indicators.candles.RealBodyIndicator;
 import org.ta4j.core.indicators.candles.RealRangeIndicator;
 import org.ta4j.core.indicators.helpers.BooleanCombineIndicator;
@@ -17,10 +19,12 @@ import org.ta4j.core.indicators.helpers.PreviousBooleanValueIndicator;
 import org.ta4j.core.indicators.helpers.PreviousValueIndicator;
 import org.ta4j.core.indicators.helpers.TransformIndicator;
 import org.ta4j.core.num.Num;
+import org.ta4j.core.num.NumFactory;
 
 /**
- * Heikin Ashi Candles Oscillator Long Term (HACOLT) indicator by LazyBear.
- * <a href="https://www.tradingview.com/script/4zuhGaAU-Vervoort-Heiken-Ashi-LongTerm-Candlestick-Oscillator-LazyBear/">TradingView</a>
+ * Heikin Ashi Candles Oscillator Long Term (HACOLT) indicator by LazyBear. <a
+ * href="https://www.tradingview.com/script/4zuhGaAU-Vervoort-Heiken-Ashi-LongTerm-Candlestick-Oscillator-LazyBear/">
+ * TradingView</a>
  *
  * TODO: The implementation is buggy, the values differ from TradingView
  *
@@ -31,10 +35,10 @@ import org.ta4j.core.num.Num;
  * candleSizeFactor = input(defval=1.1, title="Candle size factor")
  *
  * calc_tema(src, length) =>
- *     ema1 = ema(src, length)
- *     ema2 = ema(ema1, length)
- *     ema3 = ema(ema2, length)
- *     3 * (ema1 - ema2) + ema3
+ * ema1 = ema(src, length)
+ * ema2 = ema(ema1, length)
+ * ema3 = ema(ema2, length)
+ * 3 * (ema1 - ema2) + ema3
  *
  * haOpen = nz((haOpen[1] + ohlc4) / 2, ohlc4)
  * haClose = (haOpen + max(high, haOpen) + min(low, haOpen) + ohlc4) / 4
@@ -43,7 +47,8 @@ import org.ta4j.core.num.Num;
  * haCloseSmooth = 2 * thaClose - calc_tema(thaClose, length)
  * hl2Smooth = 2 * thl2 - calc_tema(thl2, length)
  * shortCandle = abs(close - open) < ((high - low) * candleSizeFactor)
- * keepn1 = ((haClose >= haOpen) and (haClose[1] >= haOpen[1])) or (close >= haClose) or (high > high[1]) or (low > low[1]) or (hl2Smooth >= haCloseSmooth)
+ * keepn1 = ((haClose >= haOpen) and (haClose[1] >= haOpen[1])) or (close >= haClose) or (high > high[1]) or (low >
+ * low[1]) or (hl2Smooth >= haCloseSmooth)
  * keepall1 = keepn1 or (keepn1[1] and (close >= open) or (close >= close[1]))
  * keep13 = shortCandle and (high >= low[1])
  * utr = keepall1 or (keepall1[1] and keep13)
@@ -82,7 +87,8 @@ import org.ta4j.core.num.Num;
  *
  * shortCandle = math.abs(close - open) < ((high - low) * candleSizeFactor)
  *
- * keepn1 = (haClose >= haOpen) and (haClose[1] >= haOpen[1]) or (close >= haClose) or (high > high[1]) or (low > low[1]) or (hl2Smooth >= haCloseSmooth)
+ * keepn1 = (haClose >= haOpen) and (haClose[1] >= haOpen[1]) or (close >= haClose) or (high > high[1]) or (low >
+ * low[1]) or (hl2Smooth >= haCloseSmooth)
  * keepall1 = keepn1 or keepn1[1] and (close >= open) or (close >= close[1])
  * keep13 = shortCandle and (high >= low[1])
  * keepn2 = (haClose < haOpen) and (haClose[1] < haOpen[1]) or (hl2Smooth < haCloseSmooth)
@@ -103,207 +109,277 @@ import org.ta4j.core.num.Num;
  *
  * hacolt = buySig ? 1 : neutralSig ? 0 : -1
  *
- * plot(hacolt, style = plot.style_columns, color = hacolt > 0 ? color.green : hacolt < 0 ? color.red : color.blue, title = "HACOLT")
+ * plot(hacolt, style = plot.style_columns, color = hacolt > 0 ? color.green : hacolt < 0 ? color.red : color.blue,
+ * title = "HACOLT")
  */
 public class HACOLTIndicator extends CachedIndicator<Num> {
-	private final Indicator<Boolean> buySig;
-	private final Indicator<Boolean> neutralSig;
-	private final int unstableBars;
+    private final Indicator<Boolean> buySig;
+    private final Indicator<Boolean> neutralSig;
+    private final int unstableBars;
+    private final NumFactory numFactory;
 
-	public HACOLTIndicator(BarSeries series, int barCount, int barCountEma, double candleSizeFactor) {
-		super(series);
+    private final int barCount;
+    private final int barCountEma;
 
-		OpenPriceIndicator open = new OpenPriceIndicator(series);
-		HighPriceIndicator high = new HighPriceIndicator(series);
-		LowPriceIndicator low = new LowPriceIndicator(series);
-		ClosePriceIndicator close = new ClosePriceIndicator(series);
-		MedianPriceIndicator hl2 = new MedianPriceIndicator(series);
-		OHLC4PriceIndicator ohlc4 = new OHLC4PriceIndicator(series);
-		HeikinAshiOpenIndicator haOpen = new HeikinAshiOpenIndicator(ohlc4);
-		HeikinAshiCloseIndicator haClose = new HeikinAshiCloseIndicator(high, low, ohlc4, haOpen);
+    private final OpenPriceIndicator open;
+    private final HighPriceIndicator high;
+    private final LowPriceIndicator low;
+    private final ClosePriceIndicator close;
+    private final MedianPriceIndicator hl2;
+    private final OHLC4PriceIndicator ohlc4;
+    private final HeikinAshiOpenIndicator haOpen;
+    private final HeikinAshiCloseIndicator haClose;
 
-		PreviousValueIndicator highPrev = new PreviousValueIndicator(high);
-		PreviousValueIndicator lowPrev = new PreviousValueIndicator(low);
-		PreviousValueIndicator closePrev = new PreviousValueIndicator(close);
-		PreviousValueIndicator haOpenPrev = new PreviousValueIndicator(haOpen);
-		PreviousValueIndicator haClosePrev = new PreviousValueIndicator(haClose);
+    private final CombineIndicator haCloseSmooth;
+    private final CombineIndicator hl2Smooth;
 
-		TripleEMAIndicator thl2 = new TripleEMAIndicator(hl2, barCount);
-		TripleEMAIndicator thaClose = new TripleEMAIndicator(haClose, barCount);
-		CombineIndicator hl2Smooth = CombineIndicator.minus(TransformIndicator.multiply(thl2, 2), new TripleEMAIndicator(thl2, barCount));
-		CombineIndicator haCloseSmooth = CombineIndicator.minus(TransformIndicator.multiply(thaClose, 2), new TripleEMAIndicator(thaClose, barCount));
+    private final BooleanCombineIndicator shortCandle;
 
-		BooleanCombineIndicator shortCandle = BooleanCombineIndicator.isLessThan(TransformIndicator.abs(new RealBodyIndicator(series)), TransformIndicator.multiply(new RealRangeIndicator(series), candleSizeFactor));
+    private final LogicIndicator keepn1;
+    private final LogicIndicator keepall1;
+    private final LogicIndicator keep13;
+    private final LogicIndicator keepn2;
+    private final LogicIndicator keep23;
+    private final LogicIndicator keepall2;
+    private final LogicIndicator utr;
+    private final LogicIndicator dtr;
+    private final LogicIndicator upw;
+    private final LogicIndicator dnw;
+    private final UpwWithOffset upwWithOffset;
 
-		BooleanCombineIndicator haGreen = BooleanCombineIndicator.isGreaterThanOrEqual(haClose, haOpen);
-		BooleanCombineIndicator haPrevGreen = BooleanCombineIndicator.isGreaterThanOrEqual(haClosePrev, haOpenPrev);
-		BooleanCombineIndicator closeGreaterHaClose = BooleanCombineIndicator.isGreaterThanOrEqual(close, haClose);
-		BooleanCombineIndicator highRising = BooleanCombineIndicator.isGreaterThan(high, highPrev);
-		BooleanCombineIndicator lowRising = BooleanCombineIndicator.isGreaterThan(low, lowPrev);
-		BooleanCombineIndicator hl2SmoothGreaterHaCloseSmooth = BooleanCombineIndicator.isGreaterThanOrEqual(hl2Smooth, haCloseSmooth);
-		LogicIndicator keepn1 = LogicIndicator.or(LogicIndicator.and(haGreen, haPrevGreen), closeGreaterHaClose, highRising, lowRising, hl2SmoothGreaterHaCloseSmooth);
+    private final BooleanCombineIndicator ltSellSig;
 
-		BooleanCombineIndicator green = BooleanCombineIndicator.isGreaterThanOrEqual(close, open);
-		BooleanCombineIndicator closeRising = BooleanCombineIndicator.isGreaterThanOrEqual(close, closePrev);
-		LogicIndicator keepall1 = LogicIndicator.or(keepn1, LogicIndicator.and(new PreviousBooleanValueIndicator(keepn1), LogicIndicator.or(green, closeRising)));
+    public HACOLTIndicator(BarSeries series, int barCount, int barCountEma, double candleSizeFactor) {
+        super(series);
 
-		BooleanCombineIndicator highGreaterPrevLow = BooleanCombineIndicator.isGreaterThanOrEqual(high, lowPrev);
-		LogicIndicator keep13 = LogicIndicator.and(shortCandle, highGreaterPrevLow);
+        this.barCount = barCount;
+        this.barCountEma = barCountEma;
 
-		BooleanCombineIndicator haRed = BooleanCombineIndicator.isLessThan(haClose, haOpen);
-		BooleanCombineIndicator haPrevRed = BooleanCombineIndicator.isLessThan(haClosePrev, haOpenPrev);
-		BooleanCombineIndicator hl2SmoothLessHaCloseSmooth = BooleanCombineIndicator.isLessThan(hl2Smooth, haCloseSmooth);
-		LogicIndicator keepn2 = LogicIndicator.and(haRed, LogicIndicator.or(haPrevRed, hl2SmoothLessHaCloseSmooth));
+        numFactory = series.numFactory();
 
-		LogicIndicator keep23 = LogicIndicator.and(shortCandle, BooleanCombineIndicator.isLessThanOrEqual(low, highPrev));
+        this.open = new OpenPriceIndicator(series);
+        this.high = new HighPriceIndicator(series);
+        this.low = new LowPriceIndicator(series);
+        this.close = new ClosePriceIndicator(series);
+        this.hl2 = new MedianPriceIndicator(series);
+        this.ohlc4 = new OHLC4PriceIndicator(series);
+        this.haOpen = new HeikinAshiOpenIndicator(ohlc4);
+        this.haClose = new HeikinAshiCloseIndicator(high, low, ohlc4, haOpen);
 
-		BooleanCombineIndicator red = BooleanCombineIndicator.isLessThan(close, open);
-		BooleanCombineIndicator closeFalling = BooleanCombineIndicator.isLessThan(close, closePrev);
-		LogicIndicator keepall2 = LogicIndicator.or(keepn2, LogicIndicator.and(new PreviousBooleanValueIndicator(keepn2), LogicIndicator.or(red, closeFalling)));
+        PreviousValueIndicator highPrev = new PreviousValueIndicator(high);
+        PreviousValueIndicator lowPrev = new PreviousValueIndicator(low);
+        PreviousValueIndicator closePrev = new PreviousValueIndicator(close);
+        PreviousValueIndicator haOpenPrev = new PreviousValueIndicator(haOpen);
+        PreviousValueIndicator haClosePrev = new PreviousValueIndicator(haClose);
 
-		LogicIndicator utr = LogicIndicator.or(keepall1, LogicIndicator.and(new PreviousBooleanValueIndicator(keepall1), keep13));
-		LogicIndicator dtr = LogicIndicator.or(keepall2, LogicIndicator.and(new PreviousBooleanValueIndicator(keepall2), keep23));
-		LogicIndicator upw = LogicIndicator.and(LogicIndicator.not(dtr), new PreviousBooleanValueIndicator(dtr), utr);
-		LogicIndicator dnw = LogicIndicator.and(LogicIndicator.not(utr), new PreviousBooleanValueIndicator(utr), dtr);
-		UpwWithOffset upwWithOffset = new UpwWithOffset(upw, dnw);
+        TripleEMAIndicator thl2 = new TripleEMAIndicator(hl2, barCount);
+        TripleEMAIndicator thaClose = new TripleEMAIndicator(haClose, barCount);
+        haCloseSmooth = CombineIndicator.minus(TransformIndicator.multiply(thaClose, 2),
+                new TripleEMAIndicator(thaClose, barCount));
+        hl2Smooth = CombineIndicator.minus(TransformIndicator.multiply(thl2, 2),
+                new TripleEMAIndicator(thl2, barCount));
 
-		this.buySig = LogicIndicator.or(upw, LogicIndicator.and(LogicIndicator.not(dnw), upwWithOffset));
-		BooleanCombineIndicator ltSellSig = BooleanCombineIndicator.isLessThan(close, new EMAIndicator(close, barCountEma));
-		this.neutralSig = new NeutralSig(this.buySig, ltSellSig);
-		this.unstableBars = Math.max(barCount, barCountEma);
-	}
+        shortCandle = BooleanCombineIndicator.isLessThan(TransformIndicator.abs(new RealBodyIndicator(series)),
+                TransformIndicator.multiply(new RealRangeIndicator(series), candleSizeFactor));
 
-	@Override
-	protected Num calculate(int index) {
-		if (buySig.getValue(index)) {
-			return one();
-		} else if (neutralSig.getValue(index)) {
-			return zero();
-		} else {
-			return numOf(-1);
-		}
-	}
+        BooleanCombineIndicator haGreen = BooleanCombineIndicator.isGreaterThanOrEqual(haClose, haOpen);
+        BooleanCombineIndicator haPrevGreen = BooleanCombineIndicator.isGreaterThanOrEqual(haClosePrev, haOpenPrev);
+        BooleanCombineIndicator closeGreaterHaClose = BooleanCombineIndicator.isGreaterThanOrEqual(close, haClose);
+        BooleanCombineIndicator highRising = BooleanCombineIndicator.isGreaterThan(high, highPrev);
+        BooleanCombineIndicator lowRising = BooleanCombineIndicator.isGreaterThan(low, lowPrev);
+        BooleanCombineIndicator hl2SmoothGreaterHaCloseSmooth = BooleanCombineIndicator.isGreaterThanOrEqual(hl2Smooth,
+                haCloseSmooth);
+        keepn1 = LogicIndicator.or(LogicIndicator.and(haGreen, haPrevGreen), closeGreaterHaClose, highRising, lowRising,
+                hl2SmoothGreaterHaCloseSmooth);
 
-	@Override
-	public int getUnstableBars() {
-		return unstableBars;
-	}
+        BooleanCombineIndicator green = BooleanCombineIndicator.isGreaterThanOrEqual(close, open);
+        BooleanCombineIndicator closeRising = BooleanCombineIndicator.isGreaterThanOrEqual(close, closePrev);
+        keepall1 = LogicIndicator.or(keepn1,
+                LogicIndicator.and(new PreviousBooleanValueIndicator(keepn1), LogicIndicator.or(green, closeRising)));
 
-	public static class HeikinAshiOpenIndicator extends CachedIndicator<Num> {
-		private final OHLC4PriceIndicator ohlc4;
+        BooleanCombineIndicator highGreaterPrevLow = BooleanCombineIndicator.isGreaterThanOrEqual(high, lowPrev);
+        keep13 = LogicIndicator.and(shortCandle, highGreaterPrevLow);
 
-		public HeikinAshiOpenIndicator(OHLC4PriceIndicator ohlc4) {
-			super(ohlc4);
+        BooleanCombineIndicator haRed = BooleanCombineIndicator.isLessThan(haClose, haOpen);
+        BooleanCombineIndicator haPrevRed = BooleanCombineIndicator.isLessThan(haClosePrev, haOpenPrev);
+        BooleanCombineIndicator hl2SmoothLessHaCloseSmooth = BooleanCombineIndicator.isLessThan(hl2Smooth,
+                haCloseSmooth);
+        keepn2 = LogicIndicator.and(haRed, LogicIndicator.or(haPrevRed, hl2SmoothLessHaCloseSmooth));
+        keep23 = LogicIndicator.and(shortCandle, BooleanCombineIndicator.isLessThanOrEqual(low, highPrev));
 
-			this.ohlc4 = ohlc4;
-		}
+        BooleanCombineIndicator red = BooleanCombineIndicator.isLessThan(close, open);
+        BooleanCombineIndicator closeFalling = BooleanCombineIndicator.isLessThan(close, closePrev);
+        keepall2 = LogicIndicator.or(keepn2,
+                LogicIndicator.and(new PreviousBooleanValueIndicator(keepn2), LogicIndicator.or(red, closeFalling)));
 
-		@Override
-		protected Num calculate(int index) {
-			if (index == 0) {
-				return ohlc4.getValue(index);
-			} else {
-				return getValue(index - 1).plus(ohlc4.getValue(index)).dividedBy(numOf(2));
-			}
-		}
+        utr = LogicIndicator.or(keepall1, LogicIndicator.and(new PreviousBooleanValueIndicator(keepall1), keep13));
+        dtr = LogicIndicator.or(keepall2, LogicIndicator.and(new PreviousBooleanValueIndicator(keepall2), keep23));
+        upw = LogicIndicator.and(LogicIndicator.not(dtr), new PreviousBooleanValueIndicator(dtr), utr);
+        dnw = LogicIndicator.and(LogicIndicator.not(utr), new PreviousBooleanValueIndicator(utr), dtr);
+        upwWithOffset = new UpwWithOffset(upw, dnw);
 
-		@Override
-		public int getUnstableBars() {
-			return 0;
-		}
-	}
+        buySig = LogicIndicator.or(upw, LogicIndicator.and(LogicIndicator.not(dnw), upwWithOffset));
+        ltSellSig = BooleanCombineIndicator.isLessThan(close, new EMAIndicator(close, barCountEma));
+        neutralSig = new NeutralSig(this.buySig, ltSellSig);
+        unstableBars = Math.max(barCount, barCountEma);
+    }
 
-	public static class HeikinAshiCloseIndicator extends CachedIndicator<Num> {
-		private final HighPriceIndicator high;
-		private final LowPriceIndicator low;
-		private final OHLC4PriceIndicator ohlc4;
-		private final HeikinAshiOpenIndicator haOpen;
+    @Override
+    protected Num calculate(int index) {
+        final boolean utrValue = utr.getValue(index);
+        final boolean dtrValue = dtr.getValue(index);
+        final boolean upwValueOrig = upw.getValue(index);
+        // upw = dtr == 0 and dtr[1] and utr
+        final boolean upwValue = dtr.getValue(index) == false && dtr.getValue(index - 1) == true && dtr.getValue(
+                index) == true;
+        final boolean dnwValueOrig = dnw.getValue(index);
+        // dnw = utr == 0 and utr[1] and dtr
+        final boolean dnwValue = utr.getValue(index) == false && utr.getValue(index - 1) == true && dtr.getValue(
+                index) == true;
+        final boolean upwWithOffsetValueOrig = upwWithOffset.getValue(index);
+        // upwWithOffset = upw != dnw ? upw : nz(upwWithOffset[1])
+        final boolean upwWithOffsetValue = upwValue != dnwValue ? upwValue : upwWithOffset.getValue(index - 1);
 
-		public HeikinAshiCloseIndicator(HighPriceIndicator high, LowPriceIndicator low, OHLC4PriceIndicator ohlc4, HeikinAshiOpenIndicator haOpen) {
-			super(high);
+        final boolean buySigValueOrig = buySig.getValue(index);
+        // buySig = upw or (not dnw and (na(upwWithOffset) ? 0 : upwWithOffset))
+        final boolean buySigValue = upwValue || (dnwValue == false && upwWithOffsetValue);
+        final boolean ltSellSigValueOrig = ltSellSig.getValue(index);
+        // ltSellSig = close < ema(close, emaLength)
+        final boolean ltSellSigValue = close.getValue(index).isLessThan(
+                new EMAIndicator(close, barCountEma).getValue(index));
+        final boolean neutralSigValueOrig = neutralSig.getValue(index);
+        // neutralSig = buySig or (ltSellSig ? 0 : nz(neutralSig[1]))
+        final boolean neutralSigValue = buySigValue || (ltSellSigValue == false && neutralSig.getValue(index - 1));
 
-			this.high = high;
-			this.low = low;
-			this.ohlc4 = ohlc4;
-			this.haOpen = haOpen;
-		}
+        if (buySigValue) {
+            return numFactory.one();
+        }
+        if (neutralSigValue) {
+            return numFactory.zero();
+        }
+        return numFactory.minusOne();
+    }
 
-		@Override
-		protected Num calculate(int index) {
-			return haOpen.getValue(index)
-					.plus(high.getValue(index).max(haOpen.getValue(index)))
-					.plus(low.getValue(index).min(haOpen.getValue(index)))
-					.plus(ohlc4.getValue(index))
-					.dividedBy(numOf(4));
-		}
+    @Override
+    public int getCountOfUnstableBars() {
+        return unstableBars;
+    }
 
-		@Override
-		public int getUnstableBars() {
-			return 0;
-		}
-	}
+    public static class HeikinAshiOpenIndicator extends CachedIndicator<Num> {
+        private final OHLC4PriceIndicator ohlc4;
 
-	private static class UpwWithOffset extends CachedIndicator<Boolean> {
-		private final Indicator<Boolean> upw;
-		private final Indicator<Boolean> dnw;
+        public HeikinAshiOpenIndicator(OHLC4PriceIndicator ohlc4) {
+            super(ohlc4);
 
-		private UpwWithOffset(Indicator<Boolean> upw, Indicator<Boolean> dnw) {
-			super(upw);
+            this.ohlc4 = ohlc4;
+        }
 
-			this.upw = upw;
-			this.dnw = dnw;
-		}
+        @Override
+        protected Num calculate(int index) {
+            if (index == 0) {
+                return ohlc4.getValue(index);
+            } else {
+                return getValue(index - 1).plus(ohlc4.getValue(index)).dividedBy(
+                        ohlc4.getBarSeries().numFactory().numOf(2));
+            }
+        }
 
-		@Override
-		protected Boolean calculate(int index) {
-			Boolean prevValue;
+        @Override
+        public int getCountOfUnstableBars() {
+            return 0;
+        }
+    }
 
-			if (index == 0) {
-				prevValue = false;
-			} else {
-				prevValue = getValue(index - 1);
-			}
+    public static class HeikinAshiCloseIndicator extends CachedIndicator<Num> {
+        private final HighPriceIndicator high;
+        private final LowPriceIndicator low;
+        private final OHLC4PriceIndicator ohlc4;
+        private final HeikinAshiOpenIndicator haOpen;
 
-			if (upw.getValue(index) != dnw.getValue(index)) {
-				return upw.getValue(index);
-			} else {
-				return prevValue;
-			}
-		}
+        public HeikinAshiCloseIndicator(HighPriceIndicator high, LowPriceIndicator low, OHLC4PriceIndicator ohlc4,
+                HeikinAshiOpenIndicator haOpen) {
+            super(high);
 
-		@Override
-		public int getUnstableBars() {
-			return 0;
-		}
-	}
+            this.high = high;
+            this.low = low;
+            this.ohlc4 = ohlc4;
+            this.haOpen = haOpen;
+        }
 
-	private static class NeutralSig extends CachedIndicator<Boolean> {
-		private final Indicator<Boolean> buySig;
-		private final Indicator<Boolean> ltSellSig;
+        @Override
+        protected Num calculate(int index) {
+            return haOpen.getValue(index).plus(high.getValue(index).max(haOpen.getValue(index))).plus(
+                    low.getValue(index).min(haOpen.getValue(index))).plus(ohlc4.getValue(index)).dividedBy(
+                    haOpen.getBarSeries().numFactory().numOf(4));
+        }
 
-		public NeutralSig(Indicator<Boolean> buySig, Indicator<Boolean> ltSellSig) {
-			super(buySig);
+        @Override
+        public int getCountOfUnstableBars() {
+            return 0;
+        }
+    }
 
-			this.buySig = buySig;
-			this.ltSellSig = ltSellSig;
-		}
+    private static class UpwWithOffset extends CachedIndicator<Boolean> {
+        private final Indicator<Boolean> upw;
+        private final Indicator<Boolean> dnw;
 
-		@Override
-		protected Boolean calculate(int index) {
-			Boolean prevValue;
+        private UpwWithOffset(Indicator<Boolean> upw, Indicator<Boolean> dnw) {
+            super(upw);
 
-			if (index == 0) {
-				prevValue = false;
-			} else {
-				prevValue = getValue(index - 1);
-			}
+            this.upw = upw;
+            this.dnw = dnw;
+        }
 
-			return buySig.getValue(index) || !ltSellSig.getValue(index) && prevValue;
-		}
+        @Override
+        protected Boolean calculate(int index) {
+            boolean prevValue = false;
 
-		@Override
-		public int getUnstableBars() {
-			return 0;
-		}
-	}
+            if (index > 0) {
+                prevValue = getValue(index - 1);
+            }
+
+            final boolean upwValue = upw.getValue(index);
+            final boolean dnwValue = dnw.getValue(index);
+            if (upwValue != dnwValue) {
+                return upwValue;
+            }
+            return prevValue;
+        }
+
+        @Override
+        public int getCountOfUnstableBars() {
+            return 0;
+        }
+    }
+
+    private static class NeutralSig extends CachedIndicator<Boolean> {
+        private final Indicator<Boolean> buySig;
+        private final Indicator<Boolean> ltSellSig;
+
+        public NeutralSig(Indicator<Boolean> buySig, Indicator<Boolean> ltSellSig) {
+            super(buySig);
+
+            this.buySig = buySig;
+            this.ltSellSig = ltSellSig;
+        }
+
+        @Override
+        protected Boolean calculate(int index) {
+            boolean prevValue = false;
+
+            if (index > 0) {
+                prevValue = getValue(index - 1);
+            }
+
+            final boolean buySigValue = buySig.getValue(index);
+            final boolean ltSellSigValue = ltSellSig.getValue(index);
+
+            return buySigValue || (!ltSellSigValue && prevValue);
+        }
+
+        @Override
+        public int getCountOfUnstableBars() {
+            return 0;
+        }
+    }
 }
