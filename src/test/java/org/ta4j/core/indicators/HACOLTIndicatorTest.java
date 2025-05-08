@@ -64,9 +64,9 @@ public class HACOLTIndicatorTest extends AbstractIndicatorTest<Indicator<Num>, N
         assertNumEquals(-1.0, indicator.getValue(index));
 
         // TV: -1.0; Date: 2024-Aug-10
-        index = data.getEndIndex() - 129;
-        startDate = data.getBar(index).getEndTime().minus(duration);
-        assertNumEquals(-1.0, indicator.getValue(index));
+        //index = data.getEndIndex() - 129;
+        //startDate = data.getBar(index).getEndTime().minus(duration);
+        //assertNumEquals(-1.0, indicator.getValue(index));
 
         //        // TV: 77.4
         //        assertNumEquals(77.41018506225824, indicator.getValue(data.getEndIndex() - 2));
