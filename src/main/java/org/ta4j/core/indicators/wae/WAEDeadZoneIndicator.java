@@ -15,10 +15,6 @@ public class WAEDeadZoneIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> deadZone;
 	private final int barCount;
 
-	public WAEDeadZoneIndicator(BarSeries series) {
-		this(series, 100, 3.7);
-	}
-
 	public WAEDeadZoneIndicator(BarSeries series, int barCount, double multiplier) {
 		super(series);
 

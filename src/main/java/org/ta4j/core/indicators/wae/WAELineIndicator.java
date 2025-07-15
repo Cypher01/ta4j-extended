@@ -16,16 +16,8 @@ public class WAELineIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> lineIndicator;
 	private final int barCount;
 
-	public WAELineIndicator(BarSeries series) {
-		this(series, 20, 2d);
-	}
-
 	public WAELineIndicator(BarSeries series, int barCount, double multiplier) {
 		this(new ClosePriceIndicator(series), barCount, multiplier);
-	}
-
-	public WAELineIndicator(Indicator<Num> indicator) {
-		this(indicator, 20, 2d);
 	}
 
 	public WAELineIndicator(Indicator<Num> indicator, int barCount, double multiplier) {

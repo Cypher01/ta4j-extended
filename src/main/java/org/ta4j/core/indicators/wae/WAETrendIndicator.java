@@ -18,16 +18,8 @@ public class WAETrendIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> trendIndicator;
 	private final int unstableBars;
 
-	public WAETrendIndicator(BarSeries series) {
-		this(series, 150, 20, 40);
-	}
-
 	public WAETrendIndicator(BarSeries series, int sensitivity, int fastLength, int slowLength) {
 		this(new ClosePriceIndicator(series), sensitivity, fastLength, slowLength);
-	}
-
-	public WAETrendIndicator(Indicator<Num> indicator) {
-		this(indicator, 150, 20, 40);
 	}
 
 	public WAETrendIndicator(Indicator<Num> indicator, int sensitivity, int fastLength, int slowLength) {

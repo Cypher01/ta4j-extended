@@ -15,16 +15,8 @@ public class CoralTrendIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> coralTrendIndicator;
 	private final int smoothingPeriod;
 
-	public CoralTrendIndicator(BarSeries series) {
-		this(series, 21, 0.4);
-	}
-
 	public CoralTrendIndicator(BarSeries series, int smoothingPeriod, double constantD) {
 		this(new ClosePriceIndicator(series), smoothingPeriod, constantD);
-	}
-
-	public CoralTrendIndicator(Indicator<Num> indicator) {
-		this(indicator, 21, 0.4);
 	}
 
 	public CoralTrendIndicator(Indicator<Num> indicator, int smoothingPeriod, double constantD) {

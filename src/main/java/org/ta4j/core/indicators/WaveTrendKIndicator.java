@@ -16,10 +16,6 @@ public class WaveTrendKIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> indicator;
 	private final int unstableBars;
 
-	public WaveTrendKIndicator(BarSeries series) {
-		this(series, 10, 21);
-	}
-
 	public WaveTrendKIndicator(BarSeries series, int barCountChannel, int barCountAverage) {
 		super(series);
 

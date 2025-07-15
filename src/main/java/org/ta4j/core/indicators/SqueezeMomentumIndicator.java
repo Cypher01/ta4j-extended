@@ -31,15 +31,11 @@ public class SqueezeMomentumIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> squeezeMomentumIndicator;
 	private final int unstableBars;
 
-	public SqueezeMomentumIndicator(BarSeries series) {
-		this(series, 20, 2d, 20, 1.5);
-	}
-
 	public SqueezeMomentumIndicator(BarSeries series, int bbLength, double bbMultFactor, int kcLength, double kcMultFactor) {
 		this(new ClosePriceIndicator(series), bbLength, bbMultFactor, kcLength, kcMultFactor);
 	}
 
-	public SqueezeMomentumIndicator(ClosePriceIndicator indicator, int bbLength, double bbMultFactor, int kcLength, double kcMultFactor) {
+	public SqueezeMomentumIndicator(Indicator<Num> indicator, int bbLength, double bbMultFactor, int kcLength, double kcMultFactor) {
 		super(indicator.getBarSeries());
 		BarSeries series = indicator.getBarSeries();
 

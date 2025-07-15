@@ -4,7 +4,8 @@ import org.ta4j.core.TradingRecord;
 import org.ta4j.core.indicators.gchannel.GChannelAverageIndicator;
 
 /**
- * Rule for GChannelAverageIndicator bullish.
+ * Rule for {@link GChannelAverageIndicator} bullish.
+ * Wrap into {@link NotRule} to create a GChannelBearishRule.
  */
 public class GChannelBullishRule extends AbstractRule {
 	private final GChannelAverageIndicator gChannelAverageIndicator;

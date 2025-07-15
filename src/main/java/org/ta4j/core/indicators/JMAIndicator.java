@@ -12,17 +12,16 @@ import org.ta4j.core.num.Num;
  * <a https://www.tradingview.com/script/nZuBWW9j-Jurik-Moving-Average/">TradingView</a>
  */
 public class JMAIndicator extends CachedIndicator<Num> {
+	private final Indicator<Num> e2Indicator;
 	private final int barCount;
-	private final E2Indicator e2Indicator;
 
 	public JMAIndicator(BarSeries series, int barCount, int phase, int power) {
 		this(new ClosePriceIndicator(series), barCount, phase, power);
 	}
 
 	public JMAIndicator(Indicator<Num> indicator, int barCount, int phase, int power) {
-		super(indicator.getBarSeries());
+		super(indicator);
 
-		this.barCount = barCount;
 		double phaseRatio;
 
 		if (phase < -100) {
@@ -39,6 +38,7 @@ public class JMAIndicator extends CachedIndicator<Num> {
 		E0Indicator e0Indicator = new E0Indicator(indicator, alpha);
 		E1Indicator e1Indicator = new E1Indicator(indicator, e0Indicator, beta);
 		this.e2Indicator = new E2Indicator(e0Indicator, e1Indicator, this, phaseRatio, alpha);
+		this.barCount = barCount;
 	}
 
 	@Override

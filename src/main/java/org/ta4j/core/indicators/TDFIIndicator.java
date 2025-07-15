@@ -19,16 +19,8 @@ public class TDFIIndicator extends AbstractIndicator<Num> {
 	private final Indicator<Num> tdfiIndicator;
 	private final int unstableBars;
 
-	public TDFIIndicator(BarSeries series) {
-		this(series, 13, 13, 13, 3);
-	}
-
 	public TDFIIndicator(BarSeries series, int lookback, int mmaLength, int smmaLength, int nLength) {
 		this(new ClosePriceIndicator(series), lookback, mmaLength, smmaLength, nLength);
-	}
-
-	public TDFIIndicator(Indicator<Num> indicator) {
-		this(indicator, 13, 13, 13, 3);
 	}
 
 	public TDFIIndicator(Indicator<Num> indicator, int lookback, int mmaLength, int smmaLength, int nLength) {

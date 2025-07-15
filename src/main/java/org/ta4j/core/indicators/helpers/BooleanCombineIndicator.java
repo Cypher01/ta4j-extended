@@ -8,7 +8,7 @@ import java.util.function.BiPredicate;
 
 /**
  * Boolean combine indicator.
- * This is based on BooleanTransformIndicator with the same logical operators,
+ * This is based on {@link BooleanTransformIndicator} with the same logical operators,
  * but instead of comparing one indicator to a constant, it compares two indicators.
  * Additionally, the indicator supports converting true and false to 1 and 0.
  */

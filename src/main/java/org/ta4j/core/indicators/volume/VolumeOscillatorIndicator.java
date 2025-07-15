@@ -14,14 +14,6 @@ public class VolumeOscillatorIndicator extends CachedIndicator<Num> {
 	private final EMAIndicator fastMaIndicator;
 	private final EMAIndicator slowMaIndicator;
 
-	public VolumeOscillatorIndicator(BarSeries series) {
-		this(series, 5, 10);
-	}
-
-	public VolumeOscillatorIndicator(VolumeIndicator volumeIndicator) {
-		this(volumeIndicator, 5, 10);
-	}
-
 	public VolumeOscillatorIndicator(BarSeries series, int fastLength, int slowLength) {
 		this(new VolumeIndicator(series), fastLength, slowLength);
 	}
