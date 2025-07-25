@@ -13,17 +13,10 @@ import org.ta4j.core.num.Num;
  */
 public class CoralTrendIndicator extends AbstractIndicator<Num> {
     private final Indicator<Num> coralTrendIndicator;
-
-    public CoralTrendIndicator(BarSeries series) {
-        this(series, 21, 0.4);
-    }
+    private final int smoothingPeriod;
 
     public CoralTrendIndicator(BarSeries series, int smoothingPeriod, double constantD) {
         this(new ClosePriceIndicator(series), smoothingPeriod, constantD);
-    }
-
-    public CoralTrendIndicator(Indicator<Num> indicator) {
-        this(indicator, 21, 0.4);
     }
 
     public CoralTrendIndicator(Indicator<Num> indicator, int smoothingPeriod, double constantD) {
@@ -47,19 +40,21 @@ public class CoralTrendIndicator extends AbstractIndicator<Num> {
         TransformIndicator addend3 = TransformIndicator.multiply(i4, c4);
         TransformIndicator addend4 = TransformIndicator.multiply(i3, c5);
 
-        this.coralTrendIndicator = CombineIndicator.plus(
-                CombineIndicator.plus(CombineIndicator.plus(addend1, addend2), addend3), addend4);
+        this.coralTrendIndicator = CombineIndicator.plus(CombineIndicator.plus(CombineIndicator.plus(addend1, addend2), addend3), addend4);
+        this.smoothingPeriod = smoothingPeriod;
     }
 
-    @Override public Num getValue(int index) {
+    @Override
+    public Num getValue(int index) {
         return coralTrendIndicator.getValue(index);
     }
 
-    @Override public int getCountOfUnstableBars() {
-        return coralTrendIndicator.getCountOfUnstableBars();
+    @Override
+    public int getCountOfUnstableBars() {
+        return smoothingPeriod;
     }
 
-    private static final class IIndicator extends CachedIndicator<Num> {
+    private static class IIndicator extends CachedIndicator<Num> {
         private final TransformIndicator addend1;
         private final Num c2;
 
@@ -67,10 +62,11 @@ public class CoralTrendIndicator extends AbstractIndicator<Num> {
             super(indicator);
 
             this.addend1 = TransformIndicator.multiply(indicator, c1);
-            this.c2 = getBarSeries().numFactory().numOf(c2);
+            this.c2 = indicator.getBarSeries().numFactory().numOf(c2);
         }
 
-        @Override protected Num calculate(int index) {
+        @Override
+        protected Num calculate(int index) {
             Num addend1Value = addend1.getValue(index);
 
             if (index == 0) {
@@ -80,8 +76,9 @@ public class CoralTrendIndicator extends AbstractIndicator<Num> {
             return addend1Value.plus(c2.multipliedBy(getValue(index - 1)));
         }
 
-        @Override public int getCountOfUnstableBars() {
-            return addend1.getCountOfUnstableBars();
+        @Override
+        public int getCountOfUnstableBars() {
+            return 0;
         }
     }
 }

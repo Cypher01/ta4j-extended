@@ -30,7 +30,7 @@ public class WAEDeadZoneIndicatorTest extends AbstractIndicatorTest<Indicator<Nu
     @Test
     public void test() {
         final var atrRmaIndicator = new ATRIndicatorPlus(data, 100, ATRIndicatorPlus.Input.SMA);
-        final var indicator = new WAEDeadZoneIndicator(data, atrRmaIndicator);
+        final var indicator = new WAEDeadZoneIndicator(data, 100, 3.7, atrRmaIndicator);
 
         assertNumEquals(10872.2058, indicator.getValue(data.getBarCount() - 3));
         assertNumEquals(10999.9002, indicator.getValue(data.getBarCount() - 2));

@@ -20,16 +20,8 @@ public class TDFIIndicator extends AbstractIndicator<Num> {
     private final Indicator<Num> tdfiIndicator;
     private final int unstableBars;
 
-    public TDFIIndicator(BarSeries series) {
-        this(series, 13, 13, 13, 3);
-    }
-
     public TDFIIndicator(BarSeries series, int lookback, int mmaLength, int smmaLength, int nLength) {
         this(new ClosePriceIndicator(series), lookback, mmaLength, smmaLength, nLength);
-    }
-
-    public TDFIIndicator(Indicator<Num> indicator) {
-        this(indicator, 13, 13, 13, 3);
     }
 
     public TDFIIndicator(Indicator<Num> indicator, int lookback, int mmaLength, int smmaLength, int nLength) {
@@ -37,23 +29,22 @@ public class TDFIIndicator extends AbstractIndicator<Num> {
 
         Indicator<Num> mmaIndicator = new EMAIndicator(TransformIndicator.multiply(indicator, 1000), mmaLength);
         Indicator<Num> smmaIndicator = new EMAIndicator(mmaIndicator, smmaLength);
-        CombineIndicator impetMmaIndicator = CombineIndicator.minus(mmaIndicator,
-                new PreviousValueIndicator(mmaIndicator));
-        CombineIndicator impetSmmaIndicator = CombineIndicator.minus(smmaIndicator,
-                new PreviousValueIndicator(smmaIndicator));
+        CombineIndicator impetMmaIndicator = CombineIndicator.minus(mmaIndicator, new PreviousValueIndicator(mmaIndicator));
+        CombineIndicator impetSmmaIndicator = CombineIndicator.minus(smmaIndicator, new PreviousValueIndicator(smmaIndicator));
         TransformIndicator divMa = TransformIndicator.abs(CombineIndicator.minus(mmaIndicator, smmaIndicator));
         AverageIndicator averimpet = new AverageIndicator(impetMmaIndicator, impetSmmaIndicator);
         CombineIndicator tdf = CombineIndicator.multiply(divMa, TransformIndicator.pow(averimpet, nLength));
-        this.tdfiIndicator = CombineIndicator.divide(tdf,
-                new HighestValueIndicator(TransformIndicator.abs(tdf), lookback * nLength));
+        this.tdfiIndicator = CombineIndicator.divide(tdf, new HighestValueIndicator(TransformIndicator.abs(tdf), lookback * nLength));
         this.unstableBars = Math.max(Math.max(mmaLength, smmaLength), lookback * nLength);
     }
 
-    @Override public Num getValue(int index) {
+    @Override
+    public Num getValue(int index) {
         return tdfiIndicator.getValue(index);
     }
 
-    @Override public int getCountOfUnstableBars() {
+    @Override
+    public int getCountOfUnstableBars() {
         return unstableBars;
     }
 }

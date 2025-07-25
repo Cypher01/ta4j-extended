@@ -14,14 +14,6 @@ public class VolumeOscillatorIndicator extends CachedIndicator<Num> {
     private final EMAIndicator fastMaIndicator;
     private final EMAIndicator slowMaIndicator;
 
-    public VolumeOscillatorIndicator(BarSeries series) {
-        this(series, 5, 10);
-    }
-
-    public VolumeOscillatorIndicator(VolumeIndicator volumeIndicator) {
-        this(volumeIndicator, 5, 10);
-    }
-
     public VolumeOscillatorIndicator(BarSeries series, int fastLength, int slowLength) {
         this(new VolumeIndicator(series), fastLength, slowLength);
     }
@@ -33,13 +25,16 @@ public class VolumeOscillatorIndicator extends CachedIndicator<Num> {
         this.slowMaIndicator = new EMAIndicator(volumeIndicator, slowLength);
     }
 
-    @Override protected Num calculate(int index) {
+    @Override
+    protected Num calculate(int index) {
         Num fast = fastMaIndicator.getValue(index);
         Num slow = slowMaIndicator.getValue(index);
         return getBarSeries().numFactory().hundred().multipliedBy(fast.minus(slow)).dividedBy(slow);
     }
 
-    @Override public int getCountOfUnstableBars() {
+    @Override
+    public int getCountOfUnstableBars() {
         return Math.max(fastMaIndicator.getCountOfUnstableBars(), slowMaIndicator.getCountOfUnstableBars());
     }
+
 }
