@@ -34,7 +34,7 @@ public class WAELineIndicator extends AbstractIndicator<Num> {
 	}
 
 	@Override
-	public int getUnstableBars() {
+	public int getCountOfUnstableBars() {
 		return barCount;
 	}
 }

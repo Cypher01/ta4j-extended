@@ -7,26 +7,25 @@ import org.ta4j.core.num.Num;
  * Smoothed moving average (SMMA) indicator, based on TradingView built-in indicator.
  */
 public class SMMAIndicator extends CachedIndicator<Num> {
-	private final Indicator<Num> indicator;
-	private final int barCount;
+    private final Indicator<Num> indicator;
+    private final int barCount;
 
-	public SMMAIndicator(Indicator<Num> indicator, int barCount) {
-		super(indicator);
-		this.indicator = indicator;
-		this.barCount = barCount;
-	}
+    public SMMAIndicator(Indicator<Num> indicator, int barCount) {
+        super(indicator);
+        this.indicator = indicator;
+        this.barCount = barCount;
+    }
 
-	@Override
-	protected Num calculate(int index) {
-		if (index == 0) {
-			return indicator.getValue(0);
-		}
+    @Override protected Num calculate(int index) {
+        if (index == 0) {
+            return indicator.getValue(0);
+        }
 
-		return getValue(index - 1).multipliedBy(numOf(barCount - 1)).plus(indicator.getValue(index)).dividedBy(numOf(barCount));
-	}
+        return getValue(index - 1).multipliedBy(getBarSeries().numFactory().numOf(barCount - 1)).plus(
+                indicator.getValue(index)).dividedBy(getBarSeries().numFactory().numOf(barCount));
+    }
 
-	@Override
-	public int getUnstableBars() {
-		return barCount;
-	}
+    @Override public int getCountOfUnstableBars() {
+        return barCount;
+    }
 }

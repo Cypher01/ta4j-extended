@@ -11,68 +11,67 @@ import org.ta4j.core.num.Num;
 
 /**
  * Supertrend indicator with more flexible configuration, based on PineScript v5 Reference Manual.
- * <a href="https://www.tradingview.com/pine-script-reference/v5/#fun_ta{dot}supertrend">TradingView</a>
+ * <a href="https://www.tradingview.com/pine-script-reference/v5/#fun_ta.supertrend">TradingView</a>
  */
 public class SupertrendIndicatorPlus extends CachedIndicator<Num> {
-	private final Indicator<Num> closePriceIndicator;
-	private final Indicator<Num> upperAtrBandIndicator;
-	private final Indicator<Num> lowerAtrBandIndicator;
-	private final int barCount;
+    private final Indicator<Num> closePriceIndicator;
+    private final Indicator<Num> upperAtrBandIndicator;
+    private final Indicator<Num> lowerAtrBandIndicator;
+    private final int barCount;
 
-	public SupertrendIndicatorPlus(BarSeries series, int barCount, double factor) {
-		this(series, barCount, factor, Input.MMA);
-	}
+    public SupertrendIndicatorPlus(BarSeries series, int barCount, double factor) {
+        this(series, barCount, factor, Input.MMA);
+    }
 
-	public SupertrendIndicatorPlus(Indicator<Num> indicator, int barCount, double factor) {
-		this(indicator, barCount, factor, Input.MMA);
-	}
+    public SupertrendIndicatorPlus(Indicator<Num> indicator, int barCount, double factor) {
+        this(indicator, barCount, factor, Input.MMA);
+    }
 
-	public SupertrendIndicatorPlus(BarSeries series, int barCount, double factor, Input atrInput) {
-		this(new MedianPriceIndicator(series), barCount, factor, atrInput);
-	}
+    public SupertrendIndicatorPlus(BarSeries series, int barCount, double factor, Input atrInput) {
+        this(new MedianPriceIndicator(series), barCount, factor, atrInput);
+    }
 
-	public SupertrendIndicatorPlus(Indicator<Num> indicator, int barCount, double factor, Input atrInput) {
-		super(indicator);
+    public SupertrendIndicatorPlus(Indicator<Num> indicator, int barCount, double factor, Input atrInput) {
+        super(indicator);
 
-		if (indicator instanceof ClosePriceIndicator) {
-			this.closePriceIndicator = indicator;
-		} else {
-			this.closePriceIndicator = new ClosePriceIndicator(indicator.getBarSeries());
-		}
+        if (indicator instanceof ClosePriceIndicator) {
+            this.closePriceIndicator = indicator;
+        } else {
+            this.closePriceIndicator = new ClosePriceIndicator(indicator.getBarSeries());
+        }
 
-		TransformIndicator atrIndicatorMultiplied = TransformIndicator.multiply(new ATRIndicatorPlus(indicator.getBarSeries(), barCount, atrInput), factor);
-		this.upperAtrBandIndicator = CombineIndicator.plus(indicator, atrIndicatorMultiplied);
-		this.lowerAtrBandIndicator = CombineIndicator.minus(indicator, atrIndicatorMultiplied);
-		this.barCount = barCount;
-	}
+        TransformIndicator atrIndicatorMultiplied = TransformIndicator.multiply(
+                new ATRIndicatorPlus(indicator.getBarSeries(), barCount, atrInput), factor);
+        this.upperAtrBandIndicator = CombineIndicator.plus(indicator, atrIndicatorMultiplied);
+        this.lowerAtrBandIndicator = CombineIndicator.minus(indicator, atrIndicatorMultiplied);
+        this.barCount = barCount;
+    }
 
-	@Override
-	protected Num calculate(int index) {
-		if (index == 0) {
-			// Assume the bar series starts in an uptrend
-			// The value is anyway not valid before the first trend reversal
-			return lowerAtrBandIndicator.getValue(index);
-		}
+    @Override protected Num calculate(int index) {
+        if (index == 0) {
+            // Assume the bar series starts in an uptrend
+            // The value is anyway not valid before the first trend reversal
+            return lowerAtrBandIndicator.getValue(index);
+        }
 
-		Num prevValue = getValue(index - 1);
-		Num prevClosePrice = closePriceIndicator.getValue(index - 1);
-		Num closePrice = closePriceIndicator.getValue(index);
-		Num upperAtrBandValue = upperAtrBandIndicator.getValue(index);
-		Num lowerAtrBandValue = lowerAtrBandIndicator.getValue(index);
+        Num prevValue = getValue(index - 1);
+        Num prevClosePrice = closePriceIndicator.getValue(index - 1);
+        Num closePrice = closePriceIndicator.getValue(index);
+        Num upperAtrBandValue = upperAtrBandIndicator.getValue(index);
+        Num lowerAtrBandValue = lowerAtrBandIndicator.getValue(index);
 
-		if (prevValue.isLessThan(prevClosePrice)) { // green, band below price
-			Num value = prevValue.max(lowerAtrBandValue);
-			return value.isLessThan(closePrice) ? value : upperAtrBandValue;
-		} else if (prevValue.isGreaterThan(prevClosePrice)) { // red, band above price
-			Num value = prevValue.min(upperAtrBandValue);
-			return value.isGreaterThan(closePrice) ? value : lowerAtrBandValue;
-		} else {
-			throw new IllegalArgumentException("Previous value equals previous close price, this shouldn't happen");
-		}
-	}
+        if (prevValue.isLessThan(prevClosePrice)) { // green, band below price
+            Num value = prevValue.max(lowerAtrBandValue);
+            return value.isLessThan(closePrice) ? value : upperAtrBandValue;
+        } else if (prevValue.isGreaterThan(prevClosePrice)) { // red, band above price
+            Num value = prevValue.min(upperAtrBandValue);
+            return value.isGreaterThan(closePrice) ? value : lowerAtrBandValue;
+        } else {
+            throw new IllegalArgumentException("Previous value equals previous close price, this shouldn't happen");
+        }
+    }
 
-	@Override
-	public int getUnstableBars() {
-		return barCount;
-	}
+    @Override public int getCountOfUnstableBars() {
+        return barCount;
+    }
 }

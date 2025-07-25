@@ -1,29 +1,29 @@
 package org.ta4j.core.indicators.helpers;
 
+import static org.ta4j.core.num.NaN.NaN;
+
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.ATRIndicatorPlus;
 import org.ta4j.core.indicators.CMAIndicator;
 import org.ta4j.core.indicators.CachedIndicator;
-import org.ta4j.core.indicators.DoubleEMAIndicator;
-import org.ta4j.core.indicators.EMAIndicator;
-import org.ta4j.core.indicators.HMAIndicator;
-import org.ta4j.core.indicators.LWMAIndicator;
-import org.ta4j.core.indicators.MMAIndicator;
 import org.ta4j.core.indicators.McGinleyDynamicIndicator;
-import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.SMMAIndicator;
 import org.ta4j.core.indicators.T3MAIndicator;
-import org.ta4j.core.indicators.TripleEMAIndicator;
 import org.ta4j.core.indicators.VAWMAIndicator;
 import org.ta4j.core.indicators.VIDYAIndicator;
 import org.ta4j.core.indicators.VWMAIndicator;
-import org.ta4j.core.indicators.WMAIndicator;
-import org.ta4j.core.indicators.ZLEMAIndicator;
+import org.ta4j.core.indicators.averages.DoubleEMAIndicator;
+import org.ta4j.core.indicators.averages.EMAIndicator;
+import org.ta4j.core.indicators.averages.HMAIndicator;
+import org.ta4j.core.indicators.averages.LWMAIndicator;
+import org.ta4j.core.indicators.averages.MMAIndicator;
+import org.ta4j.core.indicators.averages.SMAIndicator;
+import org.ta4j.core.indicators.averages.TripleEMAIndicator;
+import org.ta4j.core.indicators.averages.WMAIndicator;
+import org.ta4j.core.indicators.averages.ZLEMAIndicator;
 import org.ta4j.core.indicators.statistics.SimpleLinearRegressionIndicator;
 import org.ta4j.core.num.Num;
-
-import static org.ta4j.core.num.NaN.NaN;
 
 /**
  * Indicator to trail another indicator up or down.
@@ -157,8 +157,8 @@ public class TrailingIndicator extends CachedIndicator<Num> {
 	}
 
 	@Override
-	public int getUnstableBars() {
-		return indicator.getUnstableBars();
+	public int getCountOfUnstableBars() {
+		return getBarSeries().getBarCount();
 	}
 
 	public enum Direction {

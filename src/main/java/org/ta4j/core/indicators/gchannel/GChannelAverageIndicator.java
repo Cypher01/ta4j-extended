@@ -11,38 +11,39 @@ import org.ta4j.core.num.Num;
  * <a href="https://www.tradingview.com/script/smADlDdP-G-Channel-Trend-Detection/">TradingView</a>
  */
 public class GChannelAverageIndicator extends AbstractIndicator<Num> {
-	private final Indicator<Num> averageIndicator;
-	private final int unstableBars;
+    private final Indicator<Num> averageIndicator;
+    private final int unstableBars;
 
-	GChannelAverageIndicator(GChannelUpperBandIndicator upperBandIndicator, GChannelLowerBandIndicator lowerBandIndicator) {
-		super(upperBandIndicator.getBarSeries());
-		this.averageIndicator = TransformIndicator.divide(CombineIndicator.plus(upperBandIndicator, lowerBandIndicator), 2);
-		this.unstableBars = Math.max(upperBandIndicator.getUnstableBars(), lowerBandIndicator.getUnstableBars());
-	}
+    GChannelAverageIndicator(GChannelUpperBandIndicator upperBandIndicator,
+            GChannelLowerBandIndicator lowerBandIndicator) {
+        super(upperBandIndicator.getBarSeries());
+        this.averageIndicator = TransformIndicator.divide(CombineIndicator.plus(upperBandIndicator, lowerBandIndicator),
+                2);
+        this.unstableBars = Math.max(upperBandIndicator.getCountOfUnstableBars(),
+                lowerBandIndicator.getCountOfUnstableBars());
+    }
 
-	public boolean bullish(int index) {
-		Num value = getValue(index);
+    public boolean bullish(int index) {
+        Num value = getValue(index);
 
-		for (int i = index; i > 0; i--) {
-			Num prevValue = getValue(i);
+        for (int i = index; i > 0; i--) {
+            Num prevValue = getValue(i);
 
-			if (prevValue.isGreaterThan(value)) {
-				return false;
-			} else if (prevValue.isLessThan(value)) {
-				return true;
-			}
-		}
+            if (prevValue.isGreaterThan(value)) {
+                return false;
+            } else if (prevValue.isLessThan(value)) {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public Num getValue(int index) {
-		return averageIndicator.getValue(index);
-	}
+    @Override public Num getValue(int index) {
+        return averageIndicator.getValue(index);
+    }
 
-	@Override
-	public int getUnstableBars() {
-		return unstableBars;
-	}
+    @Override public int getCountOfUnstableBars() {
+        return unstableBars;
+    }
 }

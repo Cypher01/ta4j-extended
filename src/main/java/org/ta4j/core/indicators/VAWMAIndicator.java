@@ -9,40 +9,39 @@ import org.ta4j.core.num.Num;
  * <a href="https://www.tradingview.com/script/MDNfJENm-Moving-Average-Weighted-Volume-Adjusted/">TradingView</a>
  */
 public class VAWMAIndicator extends CachedIndicator<Num> {
-	private final Indicator<Num> indicator;
-	private final Indicator<Num> volumeIndicator;
-	private final int barCount;
+    private final Indicator<Num> indicator;
+    private final Indicator<Num> volumeIndicator;
+    private final int barCount;
 
-	public VAWMAIndicator(Indicator<Num> indicator, int barCount) {
-		super(indicator);
-		this.indicator = indicator;
-		this.volumeIndicator = new VolumeIndicator(getBarSeries());
-		this.barCount = barCount;
-	}
+    public VAWMAIndicator(Indicator<Num> indicator, int barCount) {
+        super(indicator);
+        this.indicator = indicator;
+        this.volumeIndicator = new VolumeIndicator(getBarSeries());
+        this.barCount = barCount;
+    }
 
-	// TODO: This implementation could maybe be improved by using CombineIndicator or TransformIndicator or whatever other helper of ta4j.
-	@Override
-	protected Num calculate(int index) {
-		if (index == 0) {
-			return indicator.getValue(0);
-		}
+    // TODO: This implementation could maybe be improved by using CombineIndicator or TransformIndicator or whatever
+    //  other helper of ta4j.
+    @Override protected Num calculate(int index) {
+        if (index == 0) {
+            return indicator.getValue(0);
+        }
 
-		Num sum = zero();
-		Num vol = zero();
-		int weight = 1;
+        Num sum = getBarSeries().numFactory().zero();
+        Num vol = getBarSeries().numFactory().zero();
+        int weight = 1;
 
-		for (int i = Math.max(1, index - barCount + 1); i <= index; i++) {
-			Num weightedVolume = volumeIndicator.getValue(i).multipliedBy(numOf(weight));
-			vol = vol.plus(weightedVolume);
-			sum = sum.plus(indicator.getValue(i).multipliedBy(weightedVolume));
-			weight++;
-		}
+        for (int i = Math.max(1, index - barCount + 1); i <= index; i++) {
+            Num weightedVolume = volumeIndicator.getValue(i).multipliedBy(getBarSeries().numFactory().numOf(weight));
+            vol = vol.plus(weightedVolume);
+            sum = sum.plus(indicator.getValue(i).multipliedBy(weightedVolume));
+            weight++;
+        }
 
-		return sum.dividedBy(vol);
-	}
+        return sum.dividedBy(vol);
+    }
 
-	@Override
-	public int getUnstableBars() {
-		return barCount;
-	}
+    @Override public int getCountOfUnstableBars() {
+        return barCount;
+    }
 }
