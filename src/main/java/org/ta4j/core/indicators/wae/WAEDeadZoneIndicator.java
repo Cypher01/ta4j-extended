@@ -4,7 +4,7 @@ import org.ta4j.core.BarSeries;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.ATRIndicatorPlus;
 import org.ta4j.core.indicators.AbstractIndicator;
-import org.ta4j.core.indicators.helpers.TransformIndicator;
+import org.ta4j.core.indicators.numeric.BinaryOperationIndicator;
 import org.ta4j.core.num.Num;
 
 /**
@@ -12,23 +12,30 @@ import org.ta4j.core.num.Num;
  * <a href="https://www.tradingview.com/script/d9IjcYyS-Waddah-Attar-Explosion-V2-SHK/">TradingView</a>
  */
 public class WAEDeadZoneIndicator extends AbstractIndicator<Num> {
-	private final Indicator<Num> deadZone;
-	private final int barCount;
+    private final Indicator<Num> deadZone;
+    private final int barCount;
 
-	public WAEDeadZoneIndicator(BarSeries series, int barCount, double multiplier) {
-		super(series);
+    public WAEDeadZoneIndicator(BarSeries series, int barCount, double multiplier) {
+        super(series);
 
-		this.deadZone = TransformIndicator.multiply(new ATRIndicatorPlus(series, barCount), multiplier);
-		this.barCount = barCount;
-	}
+        this.deadZone = BinaryOperationIndicator.product(new ATRIndicatorPlus(series, barCount), multiplier);
+        this.barCount = barCount;
+    }
 
-	@Override
-	public Num getValue(int index) {
-		return deadZone.getValue(index);
-	}
+    public WAEDeadZoneIndicator(BarSeries series, int barCount, double multiplier, ATRIndicatorPlus atrIndicatorPlus) {
+        super(series);
 
-	@Override
-	public int getUnstableBars() {
-		return barCount;
-	}
+        this.deadZone = BinaryOperationIndicator.product(atrIndicatorPlus, multiplier);
+        this.barCount = barCount;
+    }
+
+    @Override
+    public Num getValue(int index) {
+        return deadZone.getValue(index);
+    }
+
+    @Override
+    public int getCountOfUnstableBars() {
+        return barCount;
+    }
 }

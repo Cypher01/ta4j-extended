@@ -18,8 +18,8 @@ public class AverageNumberOfBarsCriterion extends AbstractAnalysisCriterion {
 
 	@Override
 	public Num calculate(BarSeries series, TradingRecord tradingRecord) {
-		return numberOfBarsCriterion.calculate(series, tradingRecord).dividedBy(series.numOf(tradingRecord.getPositionCount()))
-				.plus(series.numOf(0.5)).floor();
+		return numberOfBarsCriterion.calculate(series, tradingRecord).dividedBy(series.numFactory().numOf(tradingRecord.getPositionCount()))
+				.plus(series.numFactory().numOf(0.5)).floor();
 	}
 
 	@Override

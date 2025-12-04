@@ -23,7 +23,7 @@ public class MinimumNumberOfBarsCriterion extends AbstractAnalysisCriterion {
 				.filter(Position::isClosed)
 				.map(t -> calculate(series, t))
 				.min(Num::compareTo)
-				.orElse(series.zero());
+				.orElse(series.numFactory().zero());
 	}
 
 	@Override
