@@ -20,9 +20,9 @@ public class TestdataReader {
     public BarSeries readCsv(String filename) throws IOException {
         String durationFromFilename = filename.split("-")[1].split("\\.")[0];
         Duration duration;
-        if (durationFromFilename.equals("1h")) {
+        if (durationFromFilename.equalsIgnoreCase("1h")) {
             duration = Duration.ofHours(1);
-        } else if (durationFromFilename.equals("1D")) {
+        } else if (durationFromFilename.equalsIgnoreCase("1d")) {
             duration = Duration.ofDays(1);
         } else {
             throw new IllegalArgumentException("Duration cannot be determined.");
