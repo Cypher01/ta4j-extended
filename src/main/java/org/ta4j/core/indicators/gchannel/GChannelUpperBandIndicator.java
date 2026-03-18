@@ -1,41 +1,28 @@
 package org.ta4j.core.indicators.gchannel;
 
-import org.ta4j.core.Indicator;
-import org.ta4j.core.indicators.CachedIndicator;
+import org.ta4j.core.indicators.AbstractIndicator;
 import org.ta4j.core.num.Num;
 
 /**
  * G-Channel Trend Detection indicator by jaggedsoft.
  * <a href="https://www.tradingview.com/script/smADlDdP-G-Channel-Trend-Detection/">TradingView</a>
  */
-public class GChannelUpperBandIndicator extends CachedIndicator<Num> {
-    private final Indicator<Num> indicator;
-    private final int barCount;
-    private GChannelLowerBandIndicator lowerBandIndicator;
+public class GChannelUpperBandIndicator extends AbstractIndicator<Num> {
 
-    GChannelUpperBandIndicator(Indicator<Num> indicator, int barCount) {
-        super(indicator);
-        this.indicator = indicator;
-        this.barCount = barCount;
+    private final GChannelBaseIndicator baseIndicator;
+
+    GChannelUpperBandIndicator(GChannelBaseIndicator baseIndicator) {
+        super(baseIndicator.getBarSeries());
+        this.baseIndicator = baseIndicator;
     }
 
-    void setLowerBandIndicator(final GChannelLowerBandIndicator lowerBandIndicator) {
-        this.lowerBandIndicator = lowerBandIndicator;
+    @Override
+    public Num getValue(int index) {
+        return baseIndicator.getValue(index)[0];
     }
 
-    @Override protected Num calculate(int index) {
-        if (index == 0) {
-            return getBarSeries().numFactory().zero();
-        }
-
-        Num prevValueUpper = getValue(index - 1);
-        Num prevValueLower = lowerBandIndicator.getValue(index - 1);
-
-        return indicator.getValue(index).max(prevValueUpper).minus(
-                prevValueUpper.minus(prevValueLower).dividedBy(getBarSeries().numFactory().numOf(barCount)));
-    }
-
-    @Override public int getCountOfUnstableBars() {
-        return barCount;
+    @Override
+    public int getCountOfUnstableBars() {
+        return baseIndicator.getCountOfUnstableBars();
     }
 }
