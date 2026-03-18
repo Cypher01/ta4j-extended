@@ -1,5 +1,8 @@
 package org.ta4j.core.indicators.volume;
 
+import static org.ta4j.core.TestUtils.assertNumEquals;
+
+import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.ta4j.core.BarSeries;
@@ -11,22 +14,16 @@ import org.ta4j.core.num.DoubleNumFactory;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.num.NumFactory;
 
-import java.io.IOException;
-import java.time.Duration;
-
-import static org.ta4j.core.TestUtils.assertNumEquals;
-
 public class VolumeFlowIndicatorTest extends AbstractIndicatorTest<Indicator<Num>, Num> {
+    private BarSeries data;
+
     public VolumeFlowIndicatorTest(NumFactory numFactory) {
         super(numFactory);
     }
 
-    private final Duration duration = Duration.ofDays(1);
-    private BarSeries data;
-
     @Before
     public void setUp() throws IOException {
-        data = new TestdataReader(numFactory).readCsv("btcusdt-1d.csv", duration);
+        data = new TestdataReader(numFactory).readCsv("btcusdt-1d.csv");
     }
 
     @Test

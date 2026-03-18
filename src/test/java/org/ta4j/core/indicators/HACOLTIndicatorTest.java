@@ -14,34 +14,24 @@ import org.ta4j.core.num.Num;
 import org.ta4j.core.num.NumFactory;
 
 public class HACOLTIndicatorTest extends AbstractIndicatorTest<Indicator<Num>, Num> {
+    private final Duration duration = Duration.ofDays(1);
+    private BarSeries data;
+
     public HACOLTIndicatorTest(NumFactory numFactory) {
         super(numFactory);
     }
 
-    private Duration duration = Duration.ofDays(1);
-    private BarSeries data;
-
     @Before
     public void setUp() throws IOException {
-        data = new TestdataReader(numFactory).readCsv("btcusdt-1d.csv", duration);
+        data = new TestdataReader(numFactory).readCsv("btcusdt-1d.csv");
     }
 
     @Test
     public void test() {
         var indicator = new HACOLTIndicator(data, 55, 60, 1.1);
 
-        int index = 0;
+        int index;
         Instant startDate;
-
-        // TV: 1.0; Date: 2024-Aug-02
-//        index = data.getEndIndex() - 137;
-//        startDate = data.getBar(index).getEndTime().minus(duration);
-//        assertNumEquals(1.0, indicator.getValue(index));
-//
-//        // TV: -1.0; Date: 2024-Aug-04
-//        index = data.getEndIndex() - 135;
-//        startDate = data.getBar(index).getEndTime().minus(duration);
-//        assertNumEquals(-1.0, indicator.getValue(index));
 
         // TV: 1.0; Date: 2024-Jul-31
         index = data.getEndIndex() - 139;
@@ -64,15 +54,18 @@ public class HACOLTIndicatorTest extends AbstractIndicatorTest<Indicator<Num>, N
         assertNumEquals(-1.0, indicator.getValue(index));
 
         // TV: -1.0; Date: 2024-Aug-10
-        //index = data.getEndIndex() - 129;
-        //startDate = data.getBar(index).getEndTime().minus(duration);
-        //assertNumEquals(-1.0, indicator.getValue(index));
+        index = data.getEndIndex() - 129;
+        startDate = data.getBar(index).getEndTime().minus(duration);
+        assertNumEquals(-1.0, indicator.getValue(index));
 
-        //        // TV: 77.4
-        //        assertNumEquals(77.41018506225824, indicator.getValue(data.getEndIndex() - 2));
-        //        // TV: 79.9
-        //        assertNumEquals(79.94257682106146, indicator.getValue(data.getEndIndex() - 1));
-        // TV: 82.1
-//        assertNumEquals(1.0, indicator.getValue(data.getEndIndex()));
+        // TV: -1.0; Date: 2024-Aug-23
+        index = data.getEndIndex() - 116;
+        startDate = data.getBar(index).getEndTime().minus(duration);
+        assertNumEquals(-1.0, indicator.getValue(index));
+
+        // TV: 1.0; Date: 2024-Aug-24
+        index = data.getEndIndex() - 115;
+        startDate = data.getBar(index).getEndTime().minus(duration);
+        assertNumEquals(1.0, indicator.getValue(index));
     }
 }

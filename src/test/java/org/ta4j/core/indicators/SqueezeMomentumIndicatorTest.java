@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 import static org.ta4j.core.TestUtils.assertNumEquals;
 
 import java.io.IOException;
-import java.time.Duration;
 import org.junit.Before;
 import org.junit.Test;
 import org.ta4j.core.BarSeries;
@@ -14,16 +13,15 @@ import org.ta4j.core.num.Num;
 import org.ta4j.core.num.NumFactory;
 
 public class SqueezeMomentumIndicatorTest extends AbstractIndicatorTest<Indicator<Num>, Num> {
+    private BarSeries data;
+
     public SqueezeMomentumIndicatorTest(NumFactory numFactory) {
         super(numFactory);
     }
 
-    private Duration duration = Duration.ofDays(1);
-    private BarSeries data;
-
     @Before
     public void setUp() throws IOException {
-        data = new TestdataReader(numFactory).readCsv("btcusdt-1d.csv", duration);
+        data = new TestdataReader(numFactory).readCsv("btcusdt-1d.csv");
     }
 
     @Test
