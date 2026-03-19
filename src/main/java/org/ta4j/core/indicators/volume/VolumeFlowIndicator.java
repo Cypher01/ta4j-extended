@@ -10,7 +10,6 @@ import org.ta4j.core.indicators.helpers.NzIndicator;
 import org.ta4j.core.indicators.helpers.PreviousValueIndicator;
 import org.ta4j.core.indicators.helpers.RunningTotalIndicator;
 import org.ta4j.core.indicators.helpers.TypicalPriceIndicator;
-import org.ta4j.core.indicators.helpers.VolumeIndicator;
 import org.ta4j.core.indicators.numeric.BinaryOperationIndicator;
 import org.ta4j.core.indicators.numeric.UnaryOperationIndicator;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
@@ -37,7 +36,22 @@ public class VolumeFlowIndicator extends AbstractIndicator<Num> {
         StandardDeviationIndicator vinter = new StandardDeviationIndicator(inter, 30);
         BinaryOperationIndicator cutoff = BinaryOperationIndicator.product(
                 BinaryOperationIndicator.product(vinter, new ClosePriceIndicator(indicator.getBarSeries())), coef);
-        VolumeIndicator volumeIndicator = new VolumeIndicator(indicator.getBarSeries());
+        // NOTE: VolumeIndicator from ta4j-core is intentionally NOT used here.
+        // Its rolling-sum calculate() recursively calls getValue(index-1), which
+        // causes a StackOverflowError for large uncached bar series. Since we only
+        // need the per-bar volume (equivalent to VolumeIndicator with barCount=1),
+        // we read the bar volume directly without recursion.
+        CachedIndicator<Num> volumeIndicator = new CachedIndicator<>(indicator.getBarSeries()) {
+            @Override
+            protected Num calculate(int index) {
+                return getBarSeries().getBar(index).getVolume();
+            }
+
+            @Override
+            public int getCountOfUnstableBars() {
+                return 0;
+            }
+        };
         NzIndicator vave = new NzIndicator(new PreviousValueIndicator(new SMAIndicator(volumeIndicator, barCount)));
         BinaryOperationIndicator vmax = BinaryOperationIndicator.product(vave, vcoef);
         BinaryOperationIndicator vc = BinaryOperationIndicator.min(volumeIndicator, vmax);
