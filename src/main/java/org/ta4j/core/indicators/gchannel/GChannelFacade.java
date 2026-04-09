@@ -19,10 +19,9 @@ public class GChannelFacade {
 	}
 
 	public GChannelFacade(Indicator<Num> indicator, int barCount) {
-		this.upperBandIndicator = new GChannelUpperBandIndicator(indicator, barCount);
-		this.lowerBandIndicator = new GChannelLowerBandIndicator(indicator, barCount);
-		this.upperBandIndicator.setLowerBandIndicator(this.lowerBandIndicator);
-		this.lowerBandIndicator.setUpperBandIndicator(this.upperBandIndicator);
+		GChannelBaseIndicator base = new GChannelBaseIndicator(indicator, barCount);
+		this.upperBandIndicator = new GChannelUpperBandIndicator(base);
+		this.lowerBandIndicator = new GChannelLowerBandIndicator(base);
 		this.averageIndicator = new GChannelAverageIndicator(this.upperBandIndicator, this.lowerBandIndicator);
 	}
 
