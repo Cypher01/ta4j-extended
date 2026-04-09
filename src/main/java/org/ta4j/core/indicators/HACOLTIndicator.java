@@ -25,9 +25,6 @@ import org.ta4j.core.num.NumFactory;
  * Heikin Ashi Candles Oscillator Long Term (HACOLT) indicator by LazyBear. <a
  * href="https://www.tradingview.com/script/4zuhGaAU-Vervoort-Heiken-Ashi-LongTerm-Candlestick-Oscillator-LazyBear/">
  * TradingView</a>
- * <p>
- * TODO: The implementation is buggy, the values differ from TradingView
- * <p>
  * Original PineScript implementation:
  * <p>
  * length = input(defval=55, title="TEMA Period")
@@ -172,12 +169,12 @@ public class HACOLTIndicator extends CachedIndicator<Num> {
         PreviousValueIndicator haOpenPrev = new PreviousValueIndicator(haOpen);
         PreviousValueIndicator haClosePrev = new PreviousValueIndicator(haClose);
 
-        TripleEMAIndicator thl2 = new TripleEMAIndicator(hl2, barCount);
-        TripleEMAIndicator thaClose = new TripleEMAIndicator(haClose, barCount);
+        PineCompatTripleEMAIndicator thl2 = new PineCompatTripleEMAIndicator(hl2, barCount);
+        PineCompatTripleEMAIndicator thaClose = new PineCompatTripleEMAIndicator(haClose, barCount);
         haCloseSmooth = BinaryOperationIndicator.difference(BinaryOperationIndicator.product(thaClose, 2),
-                new TripleEMAIndicator(thaClose, barCount));
+                new PineCompatTripleEMAIndicator(thaClose, barCount));
         hl2Smooth = BinaryOperationIndicator.difference(BinaryOperationIndicator.product(thl2, 2),
-                new TripleEMAIndicator(thl2, barCount));
+                new PineCompatTripleEMAIndicator(thl2, barCount));
 
         shortCandle = BooleanCombineIndicator.isLessThan(UnaryOperationIndicator.abs(new RealBodyIndicator(series)),
                 BinaryOperationIndicator.product(new RealRangeIndicator(series), candleSizeFactor));
@@ -194,8 +191,11 @@ public class HACOLTIndicator extends CachedIndicator<Num> {
 
         BooleanCombineIndicator green = BooleanCombineIndicator.isGreaterThanOrEqual(close, open);
         BooleanCombineIndicator closeRising = BooleanCombineIndicator.isGreaterThanOrEqual(close, closePrev);
+        // PineScript: keepall1 = keepn1 or keepn1[1] and (close >= open) or (close >= close[1])
+        // "and" binds tighter → keepn1 OR (keepn1[1] AND green) OR closeRising
         keepall1 = LogicIndicator.or(keepn1,
-                LogicIndicator.and(new PreviousBooleanValueIndicator(keepn1), LogicIndicator.or(green, closeRising)));
+                LogicIndicator.and(new PreviousBooleanValueIndicator(keepn1), green),
+                closeRising);
 
         BooleanCombineIndicator highGreaterPrevLow = BooleanCombineIndicator.isGreaterThanOrEqual(high, lowPrev);
         keep13 = LogicIndicator.and(shortCandle, highGreaterPrevLow);
@@ -204,13 +204,18 @@ public class HACOLTIndicator extends CachedIndicator<Num> {
         BooleanCombineIndicator haPrevRed = BooleanCombineIndicator.isLessThan(haClosePrev, haOpenPrev);
         BooleanCombineIndicator hl2SmoothLessHaCloseSmooth = BooleanCombineIndicator.isLessThan(hl2Smooth,
                 haCloseSmooth);
-        keepn2 = LogicIndicator.and(haRed, LogicIndicator.or(haPrevRed, hl2SmoothLessHaCloseSmooth));
+        // PineScript: keepn2 = (haClose < haOpen) and (haClose[1] < haOpen[1]) or (hl2Smooth < haCloseSmooth)
+        // "and" binds tighter than "or" → (haRed AND haPrevRed) OR hl2SmoothLess
+        keepn2 = LogicIndicator.or(LogicIndicator.and(haRed, haPrevRed), hl2SmoothLessHaCloseSmooth);
         keep23 = LogicIndicator.and(shortCandle, BooleanCombineIndicator.isLessThanOrEqual(low, highPrev));
 
         BooleanCombineIndicator red = BooleanCombineIndicator.isLessThan(close, open);
         BooleanCombineIndicator closeFalling = BooleanCombineIndicator.isLessThan(close, closePrev);
+        // PineScript: keepall2 = keepn2 or keepn2[1] and (close < open) or (close < close[1])
+        // "and" binds tighter → keepn2 OR (keepn2[1] AND red) OR closeFalling
         keepall2 = LogicIndicator.or(keepn2,
-                LogicIndicator.and(new PreviousBooleanValueIndicator(keepn2), LogicIndicator.or(red, closeFalling)));
+                LogicIndicator.and(new PreviousBooleanValueIndicator(keepn2), red),
+                closeFalling);
 
         utr = LogicIndicator.or(keepall1, LogicIndicator.and(new PreviousBooleanValueIndicator(keepall1), keep13));
         dtr = LogicIndicator.or(keepall2, LogicIndicator.and(new PreviousBooleanValueIndicator(keepall2), keep23));
@@ -226,35 +231,10 @@ public class HACOLTIndicator extends CachedIndicator<Num> {
 
     @Override
     protected Num calculate(int index) {
-        final boolean utrValue = utr.getValue(index);
-        final boolean dtrValue = dtr.getValue(index);
-        final boolean upwValueOrig = upw.getValue(index);
-        // upw = dtr == 0 and dtr[1] and utr
-        final boolean upwValue = dtr.getValue(index) == false && dtr.getValue(index - 1) == true && dtr.getValue(
-                index) == true;
-        final boolean dnwValueOrig = dnw.getValue(index);
-        // dnw = utr == 0 and utr[1] and dtr
-        final boolean dnwValue = utr.getValue(index) == false && utr.getValue(index - 1) == true && dtr.getValue(
-                index) == true;
-        final boolean upwWithOffsetValueOrig = upwWithOffset.getValue(index);
-        // upwWithOffset = upw != dnw ? upw : nz(upwWithOffset[1])
-        final boolean upwWithOffsetValue = upwValue != dnwValue ? upwValue : upwWithOffset.getValue(index - 1);
-
-        final boolean buySigValueOrig = buySig.getValue(index);
-        // buySig = upw or (not dnw and (na(upwWithOffset) ? 0 : upwWithOffset))
-        final boolean buySigValue = upwValue || (!dnwValue && upwWithOffsetValue);
-        final boolean ltSellSigValueOrig = ltSellSig.getValue(index);
-        // ltSellSig = close < ema(close, emaLength)
-        final boolean ltSellSigValue = close.getValue(index).isLessThan(
-                new EMAIndicator(close, barCountEma).getValue(index));
-        final boolean neutralSigValueOrig = neutralSig.getValue(index);
-        // neutralSig = buySig or (ltSellSig ? 0 : nz(neutralSig[1]))
-        final boolean neutralSigValue = buySigValue || (!ltSellSigValue && neutralSig.getValue(index - 1));
-
-        if (buySigValue) {
+        if (buySig.getValue(index)) {
             return numFactory.one();
         }
-        if (neutralSigValue) {
+        if (neutralSig.getValue(index)) {
             return numFactory.zero();
         }
         return numFactory.minusOne();
@@ -375,6 +355,31 @@ public class HACOLTIndicator extends CachedIndicator<Num> {
             final boolean ltSellSigValue = ltSellSig.getValue(index);
 
             return buySigValue || (!ltSellSigValue && prevValue);
+        }
+
+        @Override
+        public int getCountOfUnstableBars() {
+            return 0;
+        }
+    }
+
+    /**
+     * PineScript-compatible TripleEMAIndicator that computes from bar 0, exactly like PineScript's {@code ta.tema()}.
+     *
+     * <p>In ta4j &ge; 0.22.2 the stock {@link TripleEMAIndicator} introduced an unstable-bar guard of
+     * {@code indicator.getCountOfUnstableBars() + barCount * 3}, which returns {@code NaN} for the first
+     * {@code 3 * barCount} bars. This changes the early-bar history fed into the recursive {@code UpwWithOffset}
+     * state machine and produces wrong results at later indices compared to TradingView.
+     *
+     * <p>By overriding {@link #getCountOfUnstableBars()} to return {@code 0} the NaN guard is disabled:
+     * the inherited {@code calculate()} falls through to the actual formula for every index, and the inner
+     * {@link EMAIndicator} instances still seed naturally at their own warm-up point (first non-NaN source bar),
+     * which exactly mirrors PineScript behaviour.
+     */
+    private static final class PineCompatTripleEMAIndicator extends TripleEMAIndicator {
+
+        private PineCompatTripleEMAIndicator(Indicator<Num> indicator, int barCount) {
+            super(indicator, barCount);
         }
 
         @Override
