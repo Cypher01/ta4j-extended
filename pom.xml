@@ -13,6 +13,7 @@
 	</parent>
 
 	<artifactId>ta4j-extended</artifactId>
+  <version>0.22.4-SNAPSHOT</version>
 
 	<url>https://github.com/Cypher01/ta4j-extended</url>
 

@@ -33,7 +33,6 @@ public class TestdataReader {
     }
 
     public BarSeries readCsv(String filename, Duration duration) throws IOException {
-        BarSeries series = new MockBarSeriesBuilder().withNumFactory(numFactory).build();
         File file = new File("src/test/resources/" + filename);
 
         return readCsv(file, duration);
@@ -71,8 +70,6 @@ public class TestdataReader {
                         .lowPrice(low)
                         .volume(volume)
                         .add();
-                series.barBuilder().beginTime(beginTime).endTime(endTime).openPrice(open).closePrice(close).highPrice(
-                        high).lowPrice(low).volume(volume).add();
             }
 
         }
