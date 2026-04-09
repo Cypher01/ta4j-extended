@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.Duration;
 import java.time.Instant;
 import org.ta4j.core.mocks.MockBarSeriesBuilder;
 import org.ta4j.core.num.NumFactory;
@@ -34,6 +33,7 @@ public class TestdataReader {
     }
 
     public BarSeries readCsv(String filename, Duration duration) throws IOException {
+        BarSeries series = new MockBarSeriesBuilder().withNumFactory(numFactory).build();
         File file = new File("src/test/resources/" + filename);
 
         return readCsv(file, duration);
@@ -71,6 +71,8 @@ public class TestdataReader {
                         .lowPrice(low)
                         .volume(volume)
                         .add();
+                series.barBuilder().beginTime(beginTime).endTime(endTime).openPrice(open).closePrice(close).highPrice(
+                        high).lowPrice(low).volume(volume).add();
             }
 
         }
