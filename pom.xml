@@ -13,7 +13,7 @@
 	</parent>
 
 	<artifactId>ta4j-extended</artifactId>
-	<version>0.22.4-SNAPSHOT</version>
+  <version>0.22.4-SNAPSHOT</version>
 
 	<url>https://github.com/Cypher01/ta4j-extended</url>
 
@@ -31,15 +31,15 @@
 	</licenses>
 
 	<properties>
-		<!-- Encoding -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <!-- Encoding -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<!-- Build -->
-		<maven.compiler.release>21</maven.compiler.release>
+    <!-- Build -->
+    <maven.compiler.release>21</maven.compiler.release>
 
-		<!-- Dependencies -->
-		<junit-jupiter.version>6.0.2</junit-jupiter.version>
+    <!-- Dependencies -->
+    <junit-jupiter.version>6.0.2</junit-jupiter.version>
 	</properties>
 
 	<dependencies>
@@ -49,19 +49,19 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
-			<version>${junit-jupiter.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.junit.vintage</groupId>
-			<artifactId>junit-vintage-engine</artifactId>
-			<version>${junit-jupiter.version}</version>
-			<scope>test</scope>
-		</dependency>
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
 	</dependencies>
 
 	<build>
@@ -109,15 +109,16 @@
 				</executions>
 			</plugin>
 
-			<!-- Source formatter -->
-			<plugin>
-				<groupId>net.revelc.code.formatter</groupId>
-				<artifactId>formatter-maven-plugin</artifactId>
-				<version>2.29.0</version>
-				<configuration>
-					<configFile>${project.basedir}/code-formatter.xml</configFile>
-				</configuration>
-			</plugin>
+      <!-- Source formatter -->
+      <plugin>
+        <groupId>net.revelc.code.formatter</groupId>
+        <artifactId>formatter-maven-plugin</artifactId>
+        <version>2.29.0</version>
+        <configuration>
+          <configFile>${project.basedir}/code-formatter.xml</configFile>
+        </configuration>
+      </plugin>
+
 		</plugins>
 	</build>
 </project>

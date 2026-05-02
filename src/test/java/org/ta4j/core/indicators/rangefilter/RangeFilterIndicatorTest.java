@@ -9,36 +9,50 @@ import org.ta4j.core.BarSeries;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.TestdataReader;
 import org.ta4j.core.indicators.AbstractIndicatorTest;
+import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.num.NumFactory;
 
 public class RangeFilterIndicatorTest extends AbstractIndicatorTest<Indicator<Num>, Num> {
-    private BarSeries data;
+  private BarSeries data;
 
-    public RangeFilterIndicatorTest(NumFactory numFactory) {
-        super(numFactory);
-    }
+  public RangeFilterIndicatorTest(NumFactory numFactory) {
+    super(numFactory);
+  }
 
-    @Before
-    public void setUp() throws IOException {
-        data = new TestdataReader(numFactory).readCsv("btcusdt-1d.csv");
-    }
+  @Before
+  public void setUp() throws IOException {
+    data = new TestdataReader(numFactory).readCsv("btcusdt-1h.csv");
+  }
 
-    @Test
-    public void calculationTest() {
-        var indicator = new RangeFilterIndicator(data, 20, 3.0);
+  @Test
+  public void calculationTest() {
+    var indicator = new RangeFilterIndicator(new ClosePriceIndicator(data), 100, 3.0);
 
-        int index;
+    int index;
+    Num value;
 
-        // TV: 64,909.1; Date: 2024-Jul-31
-        index = data.getEndIndex() - 139;
-        Num value1 = indicator.getValue(index);
-        assertEquals(64909.1, value1.doubleValue(), 0.1);
+    // TV: 88,086.2; Date: 2025-Dec-31 23:00
+    index = data.getEndIndex();
+    value = indicator.getValue(index);
+    assertEquals(88086.2, value.doubleValue(), 0.1);
 
-        // TV: 100,974.3; Date: 2024-Dec-17
-        index = data.getEndIndex();
-        Num value2 = indicator.getValue(index);
-        assertEquals(100974.3, value2.doubleValue(), 0.1);
+    // TV: 87,516.0; Date: 2025-Dec-27 19:00
+    index = data.getEndIndex() - 100;
+    value = indicator.getValue(index);
+    assertEquals(87516.0, value.doubleValue(), 0.1);
 
-    }
+    // using default close price indicator
+    indicator = new RangeFilterIndicator(data, 100, 3.0);
+
+    // TV: 88,086.2; Date: 2025-Dec-31 23:00
+    index = data.getEndIndex();
+    value = indicator.getValue(index);
+    assertEquals(88086.2, value.doubleValue(), 0.1);
+
+    // TV: 87,516.0; Date: 2025-Dec-27 19:00
+    index = data.getEndIndex() - 100;
+    value = indicator.getValue(index);
+    assertEquals(87516.0, value.doubleValue(), 0.1);
+  }
 }
