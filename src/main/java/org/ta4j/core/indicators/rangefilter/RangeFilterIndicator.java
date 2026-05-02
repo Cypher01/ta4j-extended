@@ -153,38 +153,44 @@ public class RangeFilterIndicator extends CachedIndicator<Num> {
 
     @Override protected Num calculate(int index) {
         // PineScript: nz(rngfilt[1]) — replaces na with 0.
-        // When the previous rngfilt value is NaN (because smrng was still NaN on early bars),
-        // we must substitute 0, otherwise all comparisons against NaN return false and the
-        // filter takes the wrong branch (x + r instead of x - r for positive prices),
-        // corrupting every subsequent cached value.
+        //
+        // NOTE: We intentionally do NOT call getValue(index - 1) here, because that would
+        // cause deep recursion (StackOverflowError) for large un-cached index values.
+        // Instead, we iterate from 0 to `index` to build up the running filter value.
+        // CachedIndicator ensures calculate(i) is only ever called once per index, so the
+        // repeated iteration is not a correctness problem; it is at most O(N) work per call.
         Num prevValue = getBarSeries().numFactory().zero();
 
-        if (index > 0) {
-            Num prev = getValue(index - 1);
-            if (!Num.isNaNOrNull(prev)) {
-                prevValue = prev;
+        for (int i = 0; i <= index; i++) {
+            Num x = indicator.getValue(i);
+            Num r = smoothRangeIndicator.getValue(i);
+            Num rngfilt;
+
+            if (x.isGreaterThan(prevValue)) {
+                if (x.minus(r).isLessThan(prevValue)) {
+                    rngfilt = prevValue;
+                } else {
+                    rngfilt = x.minus(r);
+                }
+            } else {
+                if (x.plus(r).isGreaterThan(prevValue)) {
+                    rngfilt = prevValue;
+                } else {
+                    rngfilt = x.plus(r);
+                }
+            }
+
+            if (i == index) {
+                return rngfilt;
+            }
+
+            if (!Num.isNaNOrNull(rngfilt)) {
+                prevValue = rngfilt;
             }
         }
 
-        Num x = indicator.getValue(index);
-        Num r = smoothRangeIndicator.getValue(index);
-        Num rngfilt;
-
-        if (x.isGreaterThan(prevValue)) {
-            if (x.minus(r).isLessThan(prevValue)) {
-                rngfilt = prevValue;
-            } else {
-                rngfilt = x.minus(r);
-            }
-        } else {
-            if (x.plus(r).isGreaterThan(prevValue)) {
-                rngfilt = prevValue;
-            } else {
-                rngfilt = x.plus(r);
-            }
-        }
-
-        return rngfilt;
+        // unreachable, but required by the compiler
+        return getBarSeries().numFactory().zero();
     }
 
     @Override public int getCountOfUnstableBars() {
